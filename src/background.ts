@@ -36,8 +36,8 @@ let adStats: AdStats = {
   blockedByTab: {},
 }
 
-const FILTER_LIST_URL = chrome.runtime.getURL("rules.json") // Simulate remote URL
-const COSMETIC_LIST_URL = chrome.runtime.getURL("cosmetic-rules.json") // Simulate remote URL
+const FILTER_LIST_URL = chrome.runtime.getURL("src/rules.json") // Fixed path
+const COSMETIC_LIST_URL = chrome.runtime.getURL("src/cosmetic-rules.json") // Fixed path
 
 // --- Utility Functions ---
 

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Blocking Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .ad-element {
+            background: #ff6b6b;
+            color: white;
+            padding: 20px;
+            margin: 10px 0;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .ad-element.banner {
+            background: #4ecdc4;
+        }
+        .ad-element.video {
+            background: #45b7d1;
+        }
+        .ad-element.popup {
+            background: #96ceb4;
+        }
+        .ad-element.redirect {
+            background: #feca57;
+        }
+        .status {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #ffebee;
+            border: 1px solid #f44336;
+        }
+    </style>
+</head>
+<body>
+    <h1>Guardian Ad Blocker Test Page</h1>
+    
+    <div class="test-section">
+        <h2>Test Status</h2>
+        <div id="status" class="status">
+            Loading test status...
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Banner Ads (Should be blocked)</h2>
+        <div class="ad-element banner" data-ad="banner">
+            <h3>Banner Advertisement</h3>
+            <p>This banner ad should be hidden by Guardian Ad Blocker</p>
+        </div>
+        <div class="ad-element banner" data-ad="banner">
+            <h3>Another Banner Ad</h3>
+            <p>This is another banner that should be blocked</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Video Ads (Should be blocked)</h2>
+        <div class="ad-element video" data-ad="video">
+            <h3>Video Advertisement</h3>
+            <p>This video ad should be hidden by Guardian Ad Blocker</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Popup Triggers (Should be blocked)</h2>
+        <button onclick="window.open('https://ads.example.com', '_blank')" class="ad-element popup">
+            Click to open popup (should be blocked)
+        </button>
+        <a href="https://ads.example.com" class="ad-element popup" target="_blank">
+            Link to ad site (should be blocked)
+        </a>
+    </div>
+
+    <div class="test-section">
+        <h2>Redirect Links (Should be blocked)</h2>
+        <a href="https://redirect.example.com" class="ad-element redirect">
+            Redirect link (should be blocked)
+        </a>
+    </div>
+
+    <div class="test-section">
+        <h2>Google AdSense (Should be blocked)</h2>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-123456789" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true">
+            <div class="ad-element">
+                Google AdSense ad (should be blocked)
+            </div>
+        </ins>
+    </div>
+
+    <div class="test-section">
+        <h2>Analytics (Should be blocked)</h2>
+        <script>
+            // This should be blocked by the content script
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'test_event', {
+                    'event_category': 'test',
+                    'event_label': 'guardian_test'
+                });
+            }
+        </script>
+        <p>Google Analytics calls should be blocked</p>
+    </div>
+
+    <script>
+        // Test script to check if Guardian is working
+        function checkGuardianStatus() {
+            const statusDiv = document.getElementById('status');
+            const adElements = document.querySelectorAll('[data-ad]');
+            const hiddenAds = Array.from(adElements).filter(el => 
+                el.style.display === 'none' || 
+                el.offsetParent === null ||
+                el.style.visibility === 'hidden'
+            );
+            
+            if (hiddenAds.length > 0) {
+                statusDiv.innerHTML = `
+                    <strong>✅ Guardian Ad Blocker is working!</strong><br>
+                    Blocked ${hiddenAds.length} out of ${adElements.length} ad elements<br>
+                    <small>Check the extension popup for detailed statistics</small>
+                `;
+                statusDiv.className = 'status';
+            } else {
+                statusDiv.innerHTML = `
+                    <strong>❌ Guardian Ad Blocker may not be working</strong><br>
+                    No ad elements were blocked (${adElements.length} found)<br>
+                    <small>Make sure the extension is installed and enabled</small>
+                `;
+                statusDiv.className = 'status error';
+            }
+        }
+
+        // Check status after page loads
+        window.addEventListener('load', () => {
+            setTimeout(checkGuardianStatus, 1000);
+        });
+
+        // Check status periodically
+        setInterval(checkGuardianStatus, 5000);
+    </script>
+</body>
+</html> 

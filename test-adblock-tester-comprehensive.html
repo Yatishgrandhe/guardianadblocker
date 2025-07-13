@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdBlock Tester Comprehensive Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .blocked {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .unblocked {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .description {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>AdBlock Tester Comprehensive Test</h1>
+    <p>This page tests all the ad blocking capabilities that were failing on the original AdBlock Tester site.</p>
+
+    <div class="score" id="score">Calculating score...</div>
+
+    <div class="test-section">
+        <h2>Contextual Advertising Tests</h2>
+        
+        <div class="test-item" id="custom-ads">
+            <div class="status">Custom Ads Test</div>
+            <div class="description">Testing custom ad script loading and visibility</div>
+        </div>
+
+        <div class="test-item" id="google-adsense">
+            <div class="status">Google AdSense Test</div>
+            <div class="description">Testing Google AdSense script and ad blocks</div>
+        </div>
+
+        <div class="test-item" id="yandex-direct">
+            <div class="status">Yandex Direct Test</div>
+            <div class="description">Testing Yandex Direct advertising</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Analytics Tools Tests</h2>
+        
+        <div class="test-item" id="google-analytics">
+            <div class="status">Google Analytics Test</div>
+            <div class="description">Testing Google Analytics script loading and execution</div>
+        </div>
+
+        <div class="test-item" id="hotjar">
+            <div class="status">Hotjar Test</div>
+            <div class="description">Testing Hotjar analytics</div>
+        </div>
+
+        <div class="test-item" id="yandex-metrica">
+            <div class="status">Yandex Metrica Test</div>
+            <div class="description">Testing Yandex Metrica analytics</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Banner Advertising Tests</h2>
+        
+        <div class="test-item" id="flash-banners">
+            <div class="status">Flash Banners Test</div>
+            <div class="description">Testing Flash banner blocking</div>
+        </div>
+
+        <div class="test-item" id="gif-banners">
+            <div class="status">GIF Banners Test</div>
+            <div class="description">Testing GIF banner blocking</div>
+        </div>
+
+        <div class="test-item" id="static-banners">
+            <div class="status">Static Image Banners Test</div>
+            <div class="description">Testing static image banner blocking</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Error Monitoring Tests</h2>
+        
+        <div class="test-item" id="sentry">
+            <div class="status">Sentry Test</div>
+            <div class="description">Testing Sentry error monitoring</div>
+        </div>
+
+        <div class="test-item" id="bugsnag">
+            <div class="status">Bugsnag Test</div>
+            <div class="description">Testing Bugsnag error monitoring</div>
+        </div>
+    </div>
+
+    <!-- Test Elements -->
+    
+    <!-- Custom Ads -->
+    <script src="https://ymatuhin.ru/ads/ads.js" defer></script>
+    <div data-ads=""></div>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6430039911615607" data-ad-slot="4852376176" data-ad-format="auto"></ins>
+
+    <!-- Yandex Direct -->
+    <div id="yandex_rtb_R-A-491776-1"></div>
+    <script type="text/javascript">
+        (adsbygoogle=window.adsbygoogle||[]).push({});
+        function(e,t,n,a,s){e[n]=e[n]||[],e[n].push((function(){Ya.Context.AdvManager.render({blockId:"R-A-491776-1",renderTo:"yandex_rtb_R-A-491776-1",async:!0})})),s=t.getElementsByTagName("script")[0],(a=t.createElement("script")).type="text/javascript",a.src="//an.yandex.ru/system/context.js",a.async=!0,s.parentNode.insertBefore(a,s)}(this,this.document,"yandexContextAsyncCallbacks");
+    </script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EPK7X69JWC"></script>
+    <script>
+        function gtag(){dataLayer.push(arguments)}
+        window.dataLayer=window.dataLayer||[];
+        gtag("js",new Date);
+        gtag("config","G-EPK7X69JWC");
+    </script>
+
+    <!-- Hotjar -->
+    <script>
+        (function(t,e,a,n,c,i){t.hj=t.hj||function(){(t.hj.q=t.hj.q||[]).push(arguments)},t._hjSettings={hjid:1639117,hjsv:6},c=e.getElementsByTagName("head")[0],(i=e.createElement("script")).async=1,i.src="https://static.hotjar.com/c/hotjar-"+t._hjSettings.hjid+".js?sv="+t._hjSettings.hjsv,c.appendChild(i)}(window,document));
+    </script>
+
+    <!-- Yandex Metrica -->
+    <script type="text/javascript">
+        (function(t,e,a,n,c,i,s){t[c]=t[c]||function(){(t[c].a=t[c].a||[]).push(arguments)},t[c].l=1*new Date,i=e.createElement(a),s=e.getElementsByTagName(a)[0],i.async=1,i.src="https://mc.yandex.ru/metrika/tag.js",s.parentNode.insertBefore(i,s)}(window,document,"script",0,"ym"),ym(70659823,"init",{clickmap:!0,trackLinks:!0,accurateTrackBounce:!0}));
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/70659823" style="position:absolute;left:-9999px" alt=""></div></noscript>
+
+    <!-- Flash Banners -->
+    <object type="application/x-shockwave-flash" data="/banners/pr_advertising_ads_banner.swf?v=1" width="240" height="400">
+        <param name="movie" value="/banners/pr_advertising_ads_banner.swf?v=1">
+    </object>
+    <embed type="application/x-shockwave-flash" src="/banners/pr_advertising_ads_banner.swf?v=1" width="240" height="400">
+
+    <!-- GIF Banners -->
+    <img src="/banners/pr_advertising_ads_banner.gif" alt="" onerror="this.remove()">
+
+    <!-- Static Image Banners -->
+    <img src="/banners/pr_advertising_ads_banner.png" onerror="this.remove()" alt="">
+
+    <!-- Sentry -->
+    <script src="https://js.sentry-cdn.com/98eefed2636036c3bdb8377b11ff28fe.min.js" crossorigin></script>
+
+    <!-- Bugsnag -->
+    <script src="//d2wy8f7a9ursnm.cloudfront.net/v4/bugsnag.min.js"></script>
+    <script>window.bugsnagClient=bugsnag("8729db6e83788a8116b19bca4c594a13");</script>
+
+    <script>
+        // Test results tracking
+        let testResults = {
+            'custom-ads': { scriptBlocked: false, elementBlocked: false },
+            'google-adsense': { scriptBlocked: false, elementBlocked: false },
+            'yandex-direct': { scriptBlocked: false, elementBlocked: false },
+            'google-analytics': { scriptBlocked: false, executionBlocked: false },
+            'hotjar': { scriptBlocked: false, executionBlocked: false },
+            'yandex-metrica': { scriptBlocked: false, executionBlocked: false },
+            'flash-banners': { fileBlocked: false, visibilityBlocked: false },
+            'gif-banners': { fileBlocked: false, visibilityBlocked: false },
+            'static-banners': { fileBlocked: false, visibilityBlocked: false },
+            'sentry': { scriptBlocked: false, executionBlocked: false },
+            'bugsnag': { scriptBlocked: false, executionBlocked: false }
+        };
+
+        // Check if elements are blocked
+        function checkElementBlocking() {
+            // Custom ads
+            const customAdsScript = document.querySelector('script[src*="ymatuhin.ru/ads/ads.js"]');
+            const customAdsDiv = document.querySelector('div[data-ads]');
+            testResults['custom-ads'].scriptBlocked = !customAdsScript;
+            testResults['custom-ads'].elementBlocked = !customAdsDiv || customAdsDiv.style.display === 'none';
+
+            // Google AdSense
+            const adsenseScript = document.querySelector('script[src*="pagead2.googlesyndication.com"]');
+            const adsenseIns = document.querySelector('ins.adsbygoogle');
+            testResults['google-adsense'].scriptBlocked = !adsenseScript;
+            testResults['google-adsense'].elementBlocked = !adsenseIns || adsenseIns.style.display === 'none';
+
+            // Yandex Direct
+            const yandexDiv = document.querySelector('#yandex_rtb_R-A-491776-1');
+            testResults['yandex-direct'].elementBlocked = !yandexDiv || yandexDiv.style.display === 'none';
+
+            // Flash banners
+            const flashObject = document.querySelector('object[type="application/x-shockwave-flash"]');
+            const flashEmbed = document.querySelector('embed[type="application/x-shockwave-flash"]');
+            testResults['flash-banners'].visibilityBlocked = (!flashObject || flashObject.style.display === 'none') && 
+                                                           (!flashEmbed || flashEmbed.style.display === 'none');
+
+            // GIF banners
+            const gifImg = document.querySelector('img[src*="pr_advertising_ads_banner.gif"]');
+            testResults['gif-banners'].visibilityBlocked = !gifImg || gifImg.style.display === 'none';
+
+            // Static banners
+            const staticImg = document.querySelector('img[src*="pr_advertising_ads_banner.png"]');
+            testResults['static-banners'].visibilityBlocked = !staticImg || staticImg.style.display === 'none';
+
+            // Sentry
+            const sentryScript = document.querySelector('script[src*="js.sentry-cdn.com"]');
+            testResults['sentry'].scriptBlocked = !sentryScript;
+
+            // Bugsnag
+            const bugsnagScript = document.querySelector('script[src*="d2wy8f7a9ursnm.cloudfront.net"]');
+            testResults['bugsnag'].scriptBlocked = !bugsnagScript;
+        }
+
+        // Check global variables
+        function checkGlobalVariables() {
+            testResults['google-analytics'].executionBlocked = !window.gtag || typeof window.gtag !== 'function';
+            testResults['hotjar'].executionBlocked = !window.hj || typeof window.hj !== 'function';
+            testResults['yandex-metrica'].executionBlocked = !window.ym || typeof window.ym !== 'function';
+            testResults['sentry'].executionBlocked = !window.Sentry || !window.Sentry.init;
+            testResults['bugsnag'].executionBlocked = !window.bugsnag || typeof window.bugsnag !== 'function';
+            testResults['yandex-direct'].scriptBlocked = !window.Ya || !window.Ya.Context || !window.Ya.Context.AdvManager;
+        }
+
+        // Update UI
+        function updateUI() {
+            Object.keys(testResults).forEach(testId => {
+                const element = document.getElementById(testId);
+                const results = testResults[testId];
+                let allBlocked = true;
+                let statusText = '';
+
+                if (testId.includes('ads') || testId.includes('direct')) {
+                    allBlocked = results.scriptBlocked && results.elementBlocked;
+                    statusText = `Script: ${results.scriptBlocked ? '✅' : '❌'}, Element: ${results.elementBlocked ? '✅' : '❌'}`;
+                } else if (testId.includes('analytics') || testId.includes('metric')) {
+                    allBlocked = results.scriptBlocked && results.executionBlocked;
+                    statusText = `Script: ${results.scriptBlocked ? '✅' : '❌'}, Execution: ${results.executionBlocked ? '✅' : '❌'}`;
+                } else if (testId.includes('banners')) {
+                    allBlocked = results.visibilityBlocked;
+                    statusText = `Visibility: ${results.visibilityBlocked ? '✅' : '❌'}`;
+                } else if (testId.includes('sentry') || testId.includes('bugsnag')) {
+                    allBlocked = results.scriptBlocked && results.executionBlocked;
+                    statusText = `Script: ${results.scriptBlocked ? '✅' : '❌'}, Execution: ${results.executionBlocked ? '✅' : '❌'}`;
+                }
+
+                element.className = `test-item ${allBlocked ? 'blocked' : 'unblocked'}`;
+                element.querySelector('.status').textContent = `${element.querySelector('.status').textContent.split(' Test')[0]} Test - ${allBlocked ? 'BLOCKED' : 'UNBLOCKED'}`;
+                element.querySelector('.description').textContent = statusText;
+            });
+
+            // Calculate score
+            const totalTests = Object.keys(testResults).length;
+            const blockedTests = Object.keys(testResults).filter(testId => {
+                const results = testResults[testId];
+                if (testId.includes('ads') || testId.includes('direct')) {
+                    return results.scriptBlocked && results.elementBlocked;
+                } else if (testId.includes('analytics') || testId.includes('metric')) {
+                    return results.scriptBlocked && results.executionBlocked;
+                } else if (testId.includes('banners')) {
+                    return results.visibilityBlocked;
+                } else if (testId.includes('sentry') || testId.includes('bugsnag')) {
+                    return results.scriptBlocked && results.executionBlocked;
+                }
+                return false;
+            }).length;
+
+            const score = Math.round((blockedTests / totalTests) * 100);
+            document.getElementById('score').textContent = `Score: ${score}/100 (${blockedTests}/${totalTests} tests passed)`;
+        }
+
+        // Run tests
+        setTimeout(() => {
+            checkElementBlocking();
+            checkGlobalVariables();
+            updateUI();
+        }, 1000);
+
+        // Re-run tests periodically
+        setInterval(() => {
+            checkElementBlocking();
+            checkGlobalVariables();
+            updateUI();
+        }, 2000);
+    </script>
+</body>
+</html> 

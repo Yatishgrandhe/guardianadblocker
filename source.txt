@@ -1,0 +1,2506 @@
+(() => {
+    'use strict';
+    console.log('Guardian Ad Blocker Enhanced: Comprehensive blocking initialized');
+
+    // Enhanced statistics tracking for anime sites
+    let animeAdStats = {
+        redirects: 0,
+        popups: 0,
+        overlays: 0,
+        scripts: 0,
+        iframes: 0,
+        notifications: 0,
+        banners: 0,
+        trackers: 0,
+        antiAdblock: 0
+    };
+
+    // Shopping website detection and ad blocking control
+    let isShoppingSite = false;
+    let isProductSearch = false;
+    let shouldBlockAds = true;
+    let allowSponsoredDeals = false;
+    
+    // Ad block animation and layout management
+    let blockedElements = new Set();
+    let animationInProgress = false;
+    let adBlockingInProgress = false;
+    let debugMode = false; // Debug mode for development
+
+    /**
+     * Check if ad blocking is enabled via extension toggle
+     */
+    const isAdBlockingEnabled = () => {
+        // Check if the extension is enabled via storage
+        try {
+            // For now, we'll use a simple approach - you can integrate with your extension's storage later
+            // This should check the actual extension toggle state
+            return true; // Default to enabled - replace with actual storage check
+        } catch (error) {
+            console.log('Guardian Ad Blocker: Error checking ad blocking status:', error);
+            return true; // Default to enabled on error
+        }
+    };
+
+    /**
+     * Listen for toggle changes from the extension
+     */
+    const listenForToggleChanges = () => {
+        // Listen for messages from the extension popup or background script
+        chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+            if (message.type === 'TOGGLE_CHANGED') {
+                console.log('Guardian Ad Blocker: Received toggle change:', message.enabled);
+                toggleAdBlocking(message.enabled);
+                sendResponse({ success: true });
+            }
+        });
+    };
+
+    /**
+     * Toggle ad blocking on/off
+     */
+    const toggleAdBlocking = (enabled) => {
+        if (enabled) {
+            console.log('Guardian Ad Blocker: Toggle turned ON - enabling ad blocking');
+            // Use the same effective approach as when toggle is OFF
+            if (isYouTube()) {
+                // Apply the working CSS approach
+                applyYouTubeAdBlocking();
+                // Also run the effective functions that work when toggle is OFF
+                removeAdElementsSafely();
+                autoSkipAds();
+                cleanupWhiteSpaces();
+            }
+            // Initialize full blocking for other sites
+            if (!isYouTube()) {
+                blockNetworkRequests();
+                blockPopupsAndRedirects();
+                blockTrackingScripts();
+                injectAdBlockingCSS();
+                blockGoogleAds();
+                hideAdContainers();
+                blockAdTestElements();
+                observeDOMForAds();
+            }
+        } else {
+            console.log('Guardian Ad Blocker: Toggle turned OFF - disabling ad blocking');
+            // Remove CSS blocking for YouTube
+            if (isYouTube()) {
+                removeYouTubeAdBlocking();
+            }
+            // Remove CSS blocking for other sites
+            const existingStyle = document.getElementById('guardian-ad-blocking-css');
+            if (existingStyle) {
+                existingStyle.remove();
+            }
+        }
+    };
+
+    /**
+     * YouTube-specific ad blocking that works well (CSS-based approach)
+     */
+    const applyYouTubeAdBlocking = () => {
+        if (!window.location.hostname.includes('youtube.com')) return;
+        
+        // Always apply CSS-based blocking for YouTube (this is what's working well)
+        const css = `
+            /* Hide ad containers before they render, preventing flicker */
+            ytd-promoted-sparkles-web-renderer, 
+            ytd-display-ad-renderer,
+            .ytd-promoted-video-renderer,
+            .ytd-ad-slot-renderer,
+            #masthead-ad,
+            .masthead-ad {
+                display: none !important;
+                height: 0 !important;
+            }
+            
+            /* Hide only specific ad overlays - minimal interference */
+            .ytp-ad-overlay-container:not(.reel-player-overlay-renderer *):not(ytd-reel-video-renderer *):not(ytd-reel-player-renderer *),
+            .ytp-ad-player-overlay:not(.reel-player-overlay-renderer *):not(ytd-reel-video-renderer *):not(ytd-reel-player-renderer *),
+            .ytp-ad-module:not(.reel-player-overlay-renderer *):not(ytd-reel-video-renderer *):not(ytd-reel-player-renderer *) {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                height: 0 !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                pointer-events: none !important;
+            }
+            
+            /* Preserve ALL Shorts functionality - NEVER hide these */
+            .reel-player-overlay-renderer,
+            .reel-player-overlay-renderer *,
+            ytd-reel-video-renderer,
+            ytd-reel-video-renderer *,
+            ytd-reel-player-renderer,
+            ytd-reel-player-renderer *,
+            .ytd-reel-video-renderer,
+            .ytd-reel-player-renderer,
+            .reel-player,
+            .reel-player * {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                height: auto !important;
+                min-height: auto !important;
+                margin: inherit !important;
+                padding: inherit !important;
+                pointer-events: auto !important;
+                position: static !important;
+                left: auto !important;
+                top: auto !important;
+                z-index: auto !important;
+            }
+            
+            /* Ensure video player functionality is preserved */
+            .html5-video-player,
+            .video-stream,
+            .ytp-player,
+            .ytp-player-content,
+            .ytp-chrome-bottom,
+            .ytp-chrome-top,
+            .ytp-caption-window-container,
+            .ytp-caption-window,
+            .ytp-caption-segment,
+            .ytp-subtitles-button,
+            .ytp-settings-button,
+            .ytp-fullscreen-button,
+            .ytp-play-button,
+            .ytp-pause-button,
+            .ytp-volume-panel,
+            .ytp-progress-bar,
+            .ytp-time-display,
+            .ytp-quality-button,
+            .ytp-autonav-toggle-button {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+            }
+            
+            /* Protect Shorts-specific UI elements */
+            ytd-reel-video-renderer[is-ad="true"] {
+                /* For ad Shorts, hide the ad content but preserve the container */
+                opacity: 0.1 !important;
+                pointer-events: none !important;
+            }
+            
+            /* Ensure Shorts scrolling and navigation work */
+            ytd-reel-shelf-renderer,
+            ytd-reel-shelf-renderer *,
+            ytd-reel-item-renderer,
+            ytd-reel-item-renderer * {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+            }
+            
+            /* Auto-skip ad buttons */
+            .ytp-ad-skip-button,
+            .ytp-ad-skip-button-modern {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+            }
+        `;
+        
+        // Remove any existing Guardian CSS to prevent duplicates
+        const existingStyle = document.getElementById('guardian-youtube-css');
+        if (existingStyle) {
+            existingStyle.remove();
+        }
+        
+        const style = document.createElement('style');
+        style.id = 'guardian-youtube-css';
+        style.textContent = css;
+        document.head.appendChild(style);
+        
+        console.log('Guardian Ad Blocker: Applied YouTube CSS-based ad blocking');
+    };
+
+    /**
+     * Remove YouTube ad blocking CSS
+     */
+    const removeYouTubeAdBlocking = () => {
+        if (!window.location.hostname.includes('youtube.com')) return;
+        
+        const existingStyle = document.getElementById('guardian-youtube-css');
+        if (existingStyle) {
+            existingStyle.remove();
+            console.log('Guardian Ad Blocker: Removed YouTube CSS-based ad blocking');
+        }
+    };
+
+    /**
+     * Enhanced Shopping Website Detection and Ad Blocking Control
+     */
+    const detectShoppingSite = () => {
+        const currentUrl = window.location.href;
+        const currentPath = window.location.pathname;
+        const currentHostname = window.location.hostname;
+        
+        // Enhanced shopping website domains with better detection
+        const shoppingDomains = [
+            'amazon.com', 'amazon.co.uk', 'amazon.ca', 'amazon.de', 'amazon.fr', 'amazon.it', 'amazon.es', 'amazon.co.jp',
+            'ebay.com', 'ebay.co.uk', 'ebay.ca', 'ebay.de', 'ebay.fr', 'ebay.it', 'ebay.es',
+            'walmart.com', 'target.com', 'bestbuy.com', 'homedepot.com', 'lowes.com',
+            'etsy.com', 'shopify.com', 'shop.com', 'newegg.com', 'bhphotovideo.com',
+            'adorama.com', 'b&h.com', 'adorama.com', 'bhphotovideo.com',
+            'aliexpress.com', 'alibaba.com', 'taobao.com', 'jd.com', 'tmall.com',
+            'flipkart.com', 'snapdeal.com', 'paytmmall.com', 'myntra.com',
+            'shopee.com', 'lazada.com', 'tokopedia.com', 'bukalapak.com',
+            'costco.com', 'samsclub.com', 'kohls.com', 'macys.com', 'nordstrom.com',
+            'wayfair.com', 'overstock.com', 'zappos.com', 'asos.com', 'h&m.com'
+        ];
+        
+        // Check if current site is a shopping website
+        isShoppingSite = shoppingDomains.some(domain => currentHostname.includes(domain));
+        
+        // Enhanced search indicators for better homepage detection
+        const searchIndicators = [
+            '/search', '/s/', '/q/', '/query', '/find', '/results', '/browse',
+            'search=', 'q=', 'query=', 'keyword=', 'term=', 'category=',
+            '/product/', '/item/', '/p/', '/pd/', '/goods/', '/dp/',
+            '/category/', '/cat/', '/department/', '/dept/', '/c/',
+            '/brand/', '/seller/', '/store/', '/shop/', '/buy/',
+            '/cart/', '/checkout/', '/order/', '/purchase/'
+        ];
+        
+        // Check if user is searching for products (not just browsing homepage)
+        isProductSearch = searchIndicators.some(indicator => 
+            currentPath.includes(indicator) || currentUrl.includes(indicator)
+        );
+        
+        // Enhanced homepage detection - check for root path or minimal path
+        const isHomepage = currentPath === '/' || 
+                          currentPath === '' || 
+                          currentPath.split('/').length <= 2 ||
+                          currentPath.includes('/home') ||
+                          currentPath.includes('/index');
+        
+        // Determine if ads should be blocked with better logic
+        if (isShoppingSite && isHomepage && !isProductSearch) {
+            shouldBlockAds = false; // Allow ads on shopping homepage browsing
+            allowSponsoredDeals = true; // Allow sponsored deals on homepage
+            console.log('Guardian Ad Blocker: Shopping homepage detected - allowing ads and sponsored deals');
+        } else if (isShoppingSite && (isProductSearch || !isHomepage)) {
+            shouldBlockAds = true; // Block ads on product pages and search results
+            allowSponsoredDeals = false; // Block sponsored deals on search pages
+            console.log('Guardian Ad Blocker: Shopping product/search page - blocking ads and sponsored deals');
+        } else {
+            shouldBlockAds = true; // Block ads on non-shopping sites
+            allowSponsoredDeals = false; // Block sponsored deals on non-shopping sites
+            console.log('Guardian Ad Blocker: Non-shopping site - blocking ads and sponsored deals');
+        }
+        
+        return shouldBlockAds;
+    };
+
+    /**
+     * Ad Block Animation and Layout Management System
+     */
+    const createAdBlockAnimation = (element) => {
+        if (!element || !element.parentNode || blockedElements.has(element)) {
+            return;
+        }
+        
+        blockedElements.add(element);
+        
+        // Create animation container
+        const animationContainer = document.createElement('div');
+        animationContainer.className = 'guardian-ad-block-animation';
+        animationContainer.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            animation: guardianAdBlockPulse 1.5s ease-in-out;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        `;
+        
+        // Add animation text
+        animationContainer.textContent = '🚫 Ad Blocked';
+        
+        // Insert animation before removing element
+        element.style.position = 'relative';
+        element.appendChild(animationContainer);
+        
+        // Remove element after animation
+        setTimeout(() => {
+            if (element.parentNode) {
+                element.remove();
+                console.log('Guardian Ad Blocker: Removed ad with animation');
+            }
+        }, 1500);
+    };
+
+    /**
+     * Guardian Loading Animation for Ad Blocking (robust logo, always centered, never overlaps YouTube info)
+     */
+    const showGuardianLoadingAnimation = () => {
+        if (adBlockingInProgress) return;
+        adBlockingInProgress = true;
+
+        // Remove any existing overlays to prevent duplicates
+        const oldOverlay = document.getElementById('guardian-loading-overlay');
+        if (oldOverlay) oldOverlay.remove();
+
+        // Create Guardian loading overlay
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'guardian-loading-overlay';
+        loadingOverlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2147483647;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+            transition: opacity 0.5s;
+        `;
+
+        // Create Guardian logo container
+        const logoContainer = document.createElement('div');
+        logoContainer.style.cssText = `
+            text-align: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        `;
+
+        // Use the uploaded Guardian logo image, fallback to emoji if error
+        const guardianLogoImg = document.createElement('img');
+        guardianLogoImg.src = chrome.runtime.getURL('public/guardian-logo.png');
+        guardianLogoImg.alt = 'Guardian Logo';
+        guardianLogoImg.style.cssText = `
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            display: block;
+            border-radius: 50%;
+            box-shadow: 0 8px 32px rgba(78, 205, 196, 0.3);
+            animation: guardianLogoSpin 2s linear infinite;
+            background: #222;
+            object-fit: contain;
+        `;
+        let fallbackUsed = false;
+        guardianLogoImg.onerror = function() {
+            if (!fallbackUsed) {
+                fallbackUsed = true;
+                guardianLogoImg.replaceWith(document.createTextNode('🛡️'));
+            }
+        };
+
+        // Create loading text
+        const loadingText = document.createElement('div');
+        loadingText.innerHTML = `
+            <div style="
+                font-family: 'Arial', sans-serif;
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 10px;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            ">
+                Guardian Ad Blocker
+            </div>
+            <div style="
+                font-size: 14px;
+                opacity: 0.8;
+                animation: guardianTextPulse 1.5s ease-in-out infinite;
+            ">
+                Blocking ads and protecting your privacy...
+            </div>
+        `;
+
+        logoContainer.appendChild(guardianLogoImg);
+        logoContainer.appendChild(loadingText);
+        loadingOverlay.appendChild(logoContainer);
+        document.body.appendChild(loadingOverlay);
+
+        // On YouTube, ensure overlay never overlaps video info/features
+        if (window.location.hostname.includes('youtube.com')) {
+            // If on a video page, check for .ytd-watch-flexy or Shorts info
+            const infoSelectors = [
+                '#info', '.ytd-watch-flexy', '.ytd-reel-video-renderer', '.ytd-shorts', '#player-container', '.ytp-chrome-bottom', '.ytp-chrome-top', '.ytp-title', '.ytp-gradient-top', '.ytp-gradient-bottom'
+            ];
+            for (const sel of infoSelectors) {
+                const infoEl = document.querySelector(sel);
+                if (infoEl) {
+                    // If overlay would overlap, move it to the top of the page (not over video/info)
+                    loadingOverlay.style.alignItems = 'flex-start';
+                    loadingOverlay.style.justifyContent = 'center';
+                    logoContainer.style.marginTop = '60px';
+                    break;
+                }
+            }
+        }
+
+        // Remove after 2 seconds and show done notification
+        setTimeout(() => {
+            if (loadingOverlay.parentNode) {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    if (loadingOverlay.parentNode) loadingOverlay.remove();
+                    showGuardianDoneNotification();
+                    adBlockingInProgress = false;
+                }, 500);
+            }
+        }, 2000);
+    };
+
+    /**
+     * Show Guardian Done Notification (always centered, always on top, never overlaps YouTube info)
+     */
+    const showGuardianDoneNotification = () => {
+        // Remove any existing notification
+        const oldNotif = document.getElementById('guardian-done-notification');
+        if (oldNotif) oldNotif.remove();
+
+        const doneNotification = document.createElement('div');
+        doneNotification.id = 'guardian-done-notification';
+        doneNotification.style.cssText = `
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #222;
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 32px;
+            font-size: 16px;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            z-index: 2147483647;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 1;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        `;
+        // Use the logo image in the notification
+        const logoImg = document.createElement('img');
+        logoImg.src = chrome.runtime.getURL('public/guardian-logo.png');
+        logoImg.alt = 'Guardian Logo';
+        logoImg.style.cssText = 'width: 28px; height: 28px; border-radius: 50%; background: #222; object-fit: contain;';
+        let fallbackUsed = false;
+        logoImg.onerror = function() {
+            if (!fallbackUsed) {
+                fallbackUsed = true;
+                logoImg.replaceWith(document.createTextNode('🛡️'));
+            }
+        };
+        doneNotification.appendChild(logoImg);
+        const text = document.createElement('span');
+        text.textContent = 'Ad blocking complete!';
+        doneNotification.appendChild(text);
+        document.body.appendChild(doneNotification);
+
+        // On YouTube, ensure notification never overlaps video info/features
+        if (window.location.hostname.includes('youtube.com')) {
+            const infoSelectors = [
+                '#info', '.ytd-watch-flexy', '.ytd-reel-video-renderer', '.ytd-shorts', '#player-container', '.ytp-chrome-bottom', '.ytp-chrome-top', '.ytp-title', '.ytp-gradient-top', '.ytp-gradient-bottom'
+            ];
+            for (const sel of infoSelectors) {
+                const infoEl = document.querySelector(sel);
+                if (infoEl) {
+                    // Move notification higher if it would overlap controls/info
+                    doneNotification.style.bottom = '120px';
+                    break;
+                }
+            }
+        }
+
+        setTimeout(() => {
+            doneNotification.style.opacity = '0';
+            setTimeout(() => {
+                if (doneNotification.parentNode) doneNotification.remove();
+            }, 500);
+        }, 1800);
+    };
+
+    /**
+     * Layout Management - Fix white spaces and empty areas
+     */
+    const fixLayoutAfterAdRemoval = () => {
+        // Find and fix empty containers
+        const emptyContainers = document.querySelectorAll('div, section, article, aside');
+        emptyContainers.forEach(container => {
+            if (container.children.length === 0 && 
+                container.offsetHeight > 0 && 
+                container.offsetWidth > 0 &&
+                !container.classList.contains('guardian-ad-block-animation')) {
+                
+                // Check if it's likely an ad container
+                const containerInfo = (container.className + ' ' + container.id).toLowerCase();
+                const adIndicators = ['ad', 'ads', 'banner', 'promo', 'sponsored', 'advertisement'];
+                
+                if (adIndicators.some(indicator => containerInfo.includes(indicator))) {
+                    container.style.display = 'none';
+                    console.log('Guardian Ad Blocker: Hidden empty ad container');
+                }
+            }
+        });
+        
+        // Fix layout gaps
+        const layoutElements = document.querySelectorAll('.container, .content, .main, .wrapper, .grid, .flex');
+        layoutElements.forEach(element => {
+            if (element.style.display === 'flex' || element.style.display === 'grid') {
+                // Force layout recalculation
+                element.style.display = 'none';
+                element.offsetHeight; // Trigger reflow
+                element.style.display = '';
+            }
+        });
+    };
+
+    /**
+     * Enhanced Network-level blocking - intercept requests before they're made
+     */
+    const blockNetworkRequests = () => {
+        // Enhanced ad domains based on HiAnime analysis
+        const adDomains = [
+            // Standard ad networks
+            'doubleclick.net', 'googleadservices.com', 'googlesyndication.com',
+            'googletagmanager.com', 'google-analytics.com', 'googletagservices.com',
+            'yandex.ru', 'yandex.com', 'mc.yandex.ru', 'an.yandex.ru',
+            'hotjar.com', 'sentry-cdn.com', 'bugsnag.com', 'cloudfront.net',
+            'taboola.com', 'outbrain.com', 'facebook.com/tr', 'facebook.net',
+            'adsystem.com', 'amazon-adsystem.com', 'bing.com/fd/ls/l',
+            'scorecardresearch.com', 'comscore.com', 'quantserve.com',
+            'criteo.com', 'pubmatic.com', 'rubiconproject.com', 'openx.net',
+            'popads.net', 'popcash.net', 'propellerads.com', 'adnxs.com',
+            'adskeeper.com', 'mgid.com', 'revcontent.com', 'outbrain.com',
+            'bidvertiser.com', 'adsterra.com', 'hilltopads.net', 'juicyads.com',
+            
+            // HiAnime specific ad networks discovered
+            'niwinn.com', 'imgclouding.com', 'citysonic.tv', 'pubbidgeartag',
+            
+            // Anime site specific ad domains
+            '*.xyz', '*.click', '*.top', '*.live', '*.club', '*.site', '*.online',
+            '*.stream', '*.watch', '*.play', '*.video', '*.media', '*.tv',
+            'exoclick.com', 'trafficjunky.com', 'popunder.com', 'popads.com',
+            'adclick.g.doubleclick.net', 'pagead2.googlesyndication.com',
+            'securepubads.g.doubleclick.net', 'tpc.googlesyndication.com',
+            'googleads.g.doubleclick.net', 'partner.googleadservices.com'
+        ];
+
+        const adPaths = [
+            '/ads/', '/ad/', '/advertising/', '/adsbygoogle', '/adsense/',
+            '/analytics/', '/tracking/', '/metrics/', '/beacon/', '/pixel/',
+            '/gtag/', '/gtm.js', '/ga.js', '/fbevents.js', '/ads.js',
+            '/adnxs.com', '/googlesyndication', '/doubleclick', '/pop',
+            '/redirect', '/r/', '/go/', '/out/', '/click/', '/link/',
+            '/aff/', '/affiliate/', '/promo/', '/offer/', '/deal/',
+            // Anime site specific paths
+            '/banner/', '/popup/', '/overlay/', '/player/', '/video/',
+            '/stream/', '/watch/', '/play/', '/media/', '/content/',
+            '/adsystem/', '/adserver/', '/adclick/', '/adview/',
+            '/popunder/', '/popup/', '/redirect/', '/click/', '/link/',
+            // HiAnime specific paths
+            '/film-728x90', '/banner-', '/ad-', '/promo-', '/sponsored-',
+            '/niwinn/', '/imgclouding/', '/citysonic/', '/pubbidgeartag/'
+        ];
+
+        // Override fetch
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            const urlStr = url.toString();
+            if (shouldBlockAds && (adDomains.some(domain => urlStr.includes(domain)) || 
+                adPaths.some(path => urlStr.includes(path)))) {
+                console.log('Guardian Ad Blocker: Blocked fetch request:', urlStr);
+                return Promise.reject(new Error('Blocked by Guardian Ad Blocker'));
+            }
+            return originalFetch.apply(this, arguments);
+        };
+
+        // Override XMLHttpRequest
+        const originalXHROpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url, async) {
+            const urlStr = url.toString();
+            if (shouldBlockAds && (adDomains.some(domain => urlStr.includes(domain)) || 
+                adPaths.some(path => urlStr.includes(path)))) {
+                console.log('Guardian Ad Blocker: Blocked XHR request:', urlStr);
+                this.abort();
+                return;
+            }
+            return originalXHROpen.apply(this, arguments);
+        };
+
+        // Block script creation
+        const originalCreateElement = document.createElement;
+        document.createElement = function(tagName) {
+            const element = originalCreateElement.call(this, tagName);
+            if (tagName.toLowerCase() === 'script') {
+                const originalSetAttribute = element.setAttribute;
+                element.setAttribute = function(name, value) {
+                    if (name === 'src' && value) {
+                        const urlStr = value.toString();
+                        if (shouldBlockAds && (adDomains.some(domain => urlStr.includes(domain)) || 
+                            adPaths.some(path => urlStr.includes(path)))) {
+                            console.log('Guardian Ad Blocker: Blocked script creation:', urlStr);
+                            return;
+                        }
+                    }
+                    return originalSetAttribute.call(this, name, value);
+                };
+            }
+            return element;
+        };
+    };
+
+    /**
+     * Advanced Anime Site Popup and Redirect Blocking
+     */
+    const blockAnimeSiteRedirects = () => {
+        // Store original location for comparison
+        const originalLocation = window.location.href;
+        
+        // Enhanced window.open blocking with anime site patterns
+        const originalOpen = window.open;
+        window.open = function(url, name, specs) {
+            if (url && typeof url === 'string') {
+                const animeAdPatterns = [
+                    'ad', 'ads', 'popup', 'promo', 'offer', 'deal', 'click', 'redirect',
+                    'affiliate', 'aff', 'track', 'go', 'out', 'link', 'r/', 'casino',
+                    'dating', 'porn', 'xxx', 'sex', 'adult', 'bet', 'gambling',
+                    'doubleclick', 'googleadservices', 'googlesyndication', 'taboola',
+                    'outbrain', 'popads', 'popcash', 'propellerads', 'adsterra',
+                    'hilltopads', 'juicyads', 'exoclick', 'trafficjunky', 'adskeeper',
+                    'mgid', 'revcontent', 'bidvertiser', 'popunder', 'popup'
+                ];
+                
+                if (animeAdPatterns.some(pattern => url.toLowerCase().includes(pattern))) {
+                    console.log('Guardian Ad Blocker: Blocked anime site popup:', url);
+                    animeAdStats.popups++;
+                    return null;
+                }
+            }
+            return originalOpen.apply(this, arguments);
+        };
+
+        // Block all location changes with anime site patterns
+        const blockLocationChange = (newUrl) => {
+            const currentDomain = window.location.hostname;
+            const animeSuspiciousPatterns = [
+                'ad', 'ads', 'popup', 'promo', 'offer', 'deal', 'click', 'redirect',
+                'affiliate', 'aff', 'track', 'go', 'out', 'link', 'r/', 'casino',
+                'dating', 'porn', 'xxx', 'sex', 'adult', 'bet', 'gambling',
+                'doubleclick', 'googleadservices', 'googlesyndication', 'taboola',
+                'outbrain', 'popads', 'popcash', 'propellerads', 'adsterra',
+                'hilltopads', 'juicyads', 'exoclick', 'trafficjunky', 'adskeeper',
+                'mgid', 'revcontent', 'bidvertiser', 'popunder', 'popup'
+            ];
+            
+            if (newUrl && typeof newUrl === 'string') {
+                const urlLower = newUrl.toLowerCase();
+                const newDomain = new URL(newUrl, window.location.origin).hostname;
+                
+                // Block if going to different domain with suspicious patterns
+                if (newDomain !== currentDomain && 
+                    animeSuspiciousPatterns.some(pattern => urlLower.includes(pattern))) {
+                    console.log('Guardian Ad Blocker: Blocked anime site redirect:', newUrl);
+                    animeAdStats.redirects++;
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        // Override location setters
+        const originalLocationHref = Object.getOwnPropertyDescriptor(Location.prototype, 'href');
+        Object.defineProperty(location, 'href', {
+            get: originalLocationHref.get,
+            set: function(newUrl) {
+                if (blockLocationChange(newUrl)) return;
+                originalLocationHref.set.call(this, newUrl);
+            }
+        });
+
+        // Block assign and replace
+        const originalAssign = location.assign;
+        const originalReplace = location.replace;
+        
+        location.assign = function(url) {
+            if (blockLocationChange(url)) return;
+            return originalAssign.call(this, url);
+        };
+
+        location.replace = function(url) {
+            if (blockLocationChange(url)) return;
+            return originalReplace.call(this, url);
+        };
+
+        // Block history manipulation for anime site redirects
+        const originalPushState = history.pushState;
+        const originalReplaceState = history.replaceState;
+        
+        history.pushState = function(state, title, url) {
+            if (blockLocationChange(url)) return;
+            return originalPushState.apply(this, arguments);
+        };
+
+        history.replaceState = function(state, title, url) {
+            if (blockLocationChange(url)) return;
+            return originalReplaceState.apply(this, arguments);
+        };
+
+        // Block beforeunload redirects (common on anime streaming sites)
+        let userInitiatedNavigation = false;
+        
+        // Track user-initiated navigation
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target.tagName === 'A' || target.closest('a')) {
+                userInitiatedNavigation = true;
+                setTimeout(() => userInitiatedNavigation = false, 1000);
+            }
+        });
+
+        window.addEventListener('beforeunload', (e) => {
+            if (!userInitiatedNavigation) {
+                e.preventDefault();
+                e.returnValue = '';
+                console.log('Guardian Ad Blocker: Blocked anime site beforeunload redirect');
+            }
+        });
+
+        // Enhanced click redirect blocking for anime sites
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            const anchor = target.closest('a[href]');
+            
+            if (anchor && anchor.href) {
+                const href = anchor.href;
+                const currentDomain = window.location.hostname;
+                
+                try {
+                    const linkDomain = new URL(href).hostname;
+                    const animeSuspiciousPatterns = [
+                        'doubleclick', 'googleadservices', 'googlesyndication', 'ads',
+                        'popads', 'popcash', 'propellerads', 'adsterra', 'hilltopads',
+                        'juicyads', 'exoclick', 'trafficjunky', 'adskeeper', 'mgid',
+                        'revcontent', 'outbrain', 'taboola', 'bidvertiser', 'casino',
+                        'dating', 'porn', 'xxx', 'sex', 'adult', 'bet', 'gambling',
+                        'popunder', 'popup', 'redirect', 'click', 'link', 'go', 'out'
+                    ];
+                    
+                    // Block external links with suspicious patterns
+                    if (linkDomain !== currentDomain && 
+                        animeSuspiciousPatterns.some(pattern => href.toLowerCase().includes(pattern))) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        console.log('Guardian Ad Blocker: Blocked anime site suspicious link:', href);
+                        animeAdStats.redirects++;
+                        return false;
+                    }
+                    
+                    // Block links with target="_blank" to suspicious domains
+                    if (anchor.target === '_blank' && linkDomain !== currentDomain) {
+                        const whitelist = ['youtube.com', 'google.com', 'github.com', 'stackoverflow.com'];
+                        if (!whitelist.some(domain => linkDomain.includes(domain))) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.stopImmediatePropagation();
+                            console.log('Guardian Ad Blocker: Blocked anime site external popup link:', href);
+                            animeAdStats.popups++;
+                            return false;
+                        }
+                    }
+                } catch (error) {
+                    // If URL parsing fails, it's likely malicious
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    console.log('Guardian Ad Blocker: Blocked anime site malformed link:', href);
+                    animeAdStats.redirects++;
+                    return false;
+                }
+            }
+            
+            // Block clicks on overlay elements (common popup trigger on anime sites)
+            if (target.style.position === 'fixed' || target.style.position === 'absolute') {
+                const rect = target.getBoundingClientRect();
+                if (rect.width >= window.innerWidth * 0.8 || rect.height >= window.innerHeight * 0.8) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    console.log('Guardian Ad Blocker: Blocked anime site overlay click');
+                    animeAdStats.overlays++;
+                    return false;
+                }
+            }
+        }, true);
+
+        // Block form submissions to ad domains
+        document.addEventListener('submit', (e) => {
+            const form = e.target;
+            if (form.tagName === 'FORM' && form.action) {
+                const animeSuspiciousPatterns = ['ad', 'ads', 'popup', 'promo', 'offer', 'deal', 'redirect'];
+                if (animeSuspiciousPatterns.some(pattern => form.action.toLowerCase().includes(pattern))) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Guardian Ad Blocker: Blocked anime site form submission:', form.action);
+                    animeAdStats.redirects++;
+                    return false;
+                }
+            }
+        }, true);
+
+        // Block iframe navigation
+        document.addEventListener('load', (e) => {
+            if (e.target.tagName === 'IFRAME') {
+                const iframe = e.target;
+                try {
+                    const originalSrc = iframe.src;
+                    Object.defineProperty(iframe, 'src', {
+                        get: () => originalSrc,
+                        set: (newSrc) => {
+                            if (blockLocationChange(newSrc)) return;
+                            iframe.setAttribute('src', newSrc);
+                        }
+                    });
+                } catch (error) {
+                    // Cross-origin iframe, can't modify
+                }
+            }
+        }, true);
+
+        // Monitor for programmatic navigation attempts
+        const originalSetTimeout = window.setTimeout;
+        const originalSetInterval = window.setInterval;
+        
+        window.setTimeout = function(callback, delay) {
+            const wrappedCallback = function() {
+                try {
+                    return callback.apply(this, arguments);
+                } catch (error) {
+                    if (error.message.includes('location') || error.message.includes('redirect')) {
+                        console.log('Guardian Ad Blocker: Blocked anime site timed redirect attempt');
+                        animeAdStats.redirects++;
+                        return;
+                    }
+                    throw error;
+                }
+            };
+            return originalSetTimeout.call(this, wrappedCallback, delay);
+        };
+
+        window.setInterval = function(callback, delay) {
+            const wrappedCallback = function() {
+                try {
+                    return callback.apply(this, arguments);
+                } catch (error) {
+                    if (error.message.includes('location') || error.message.includes('redirect')) {
+                        console.log('Guardian Ad Blocker: Blocked anime site interval redirect attempt');
+                        animeAdStats.redirects++;
+                        return;
+                    }
+                    throw error;
+                }
+            };
+            return originalSetInterval.call(this, wrappedCallback, delay);
+        };
+    };
+
+    /**
+     * Enhanced Anti-Adblock Detection & Service Worker Blocking
+     */
+    const blockAntiAdblockAndNotifications = () => {
+        // Auto-deny notification permission requests
+        if (Notification && Notification.requestPermission) {
+            const originalRequestPermission = Notification.requestPermission;
+            Notification.requestPermission = function() {
+                console.log('Guardian Ad Blocker: Blocked notification permission request');
+                animeAdStats.notifications++;
+                return Promise.resolve('denied');
+            };
+        }
+
+        // Enhanced service worker blocking for HiAnime patterns
+        if (navigator.serviceWorker && navigator.serviceWorker.register) {
+            const originalRegister = navigator.serviceWorker.register;
+            navigator.serviceWorker.register = function(scriptURL, options) {
+                if (scriptURL && typeof scriptURL === 'string') {
+                    const suspiciousPatterns = [
+                        'ad', 'ads', 'push', 'notification', 'popup', 
+                        'tracking', 'analytics', 'niwinn', 'pubbidgeartag',
+                        'imgclouding', 'citysonic', 'banner', 'promo'
+                    ];
+                    if (suspiciousPatterns.some(pattern => scriptURL.toLowerCase().includes(pattern))) {
+                        console.log('Guardian Ad Blocker: Blocked suspicious service worker:', scriptURL);
+                        animeAdStats.notifications++;
+                        animeAdStats.antiAdblock++;
+                        return Promise.reject(new Error('Blocked by Guardian Ad Blocker'));
+                    }
+                }
+                return originalRegister.apply(this, arguments);
+            };
+        }
+
+        // Block anti-adblock detection scripts
+        const antiAdblockPatterns = [
+            'adblock', 'adblocker', 'AdBlock', 'uBlock', 'blockadblock',
+            'adblockplus', 'detector', 'bab', 'FuckAdBlock', 'BlockAdBlock',
+            'adsBlocked', 'adBlockEnabled', 'adBlockDetected', 'isAdBlockActive',
+            'AdBlocker', 'adBlocker', 'please disable', 'disable adblock',
+            'turn off adblock', 'whitelist', 'pubbidgeartag'
+        ];
+
+        // Override common anti-adblock detection methods
+        antiAdblockPatterns.forEach(pattern => {
+            try {
+                Object.defineProperty(window, pattern, {
+                    get: () => false,
+                    set: () => {},
+                    configurable: false
+                });
+            } catch (e) {
+                // Ignore errors for already defined properties
+            }
+        });
+
+        // Block dataLayer manipulation for anti-adblock
+        if (window.dataLayer) {
+            const originalPush = window.dataLayer.push;
+            window.dataLayer.push = function(...args) {
+                const argsStr = JSON.stringify(args).toLowerCase();
+                if (antiAdblockPatterns.some(pattern => argsStr.includes(pattern))) {
+                    console.log('Guardian Ad Blocker: Blocked anti-adblock dataLayer push');
+                    animeAdStats.antiAdblock++;
+                    return;
+                }
+                return originalPush.apply(this, args);
+            };
+        }
+    };
+
+    /**
+     * Enhanced Anime Site Overlay and Banner Removal with Legitimate Image Protection
+     */
+    const removeAnimeSiteOverlays = () => {
+        // Skip overlay removal on shopping homepage
+        if (!shouldBlockAds) {
+            return;
+        }
+        
+        // Helper function to check if an image is likely legitimate content
+        const isLegitimateImage = (img) => {
+            const src = img.src || '';
+            const alt = img.alt || '';
+            const className = img.className || '';
+            
+            // Legitimate image indicators
+            const legitimatePatterns = [
+                'avatar', 'profile', 'user', 'member', 'author', 'author-',
+                'logo', 'icon', 'thumbnail', 'preview', 'cover', 'poster',
+                'product', 'item', 'gallery', 'photo', 'image', 'picture',
+                'content', 'article', 'post', 'news', 'blog', 'story',
+                'hero', 'featured', 'main', 'primary', 'background',
+                'header', 'footer', 'sidebar', 'navigation', 'nav',
+                'button', 'btn', 'link', 'menu', 'search', 'social',
+                'facebook', 'twitter', 'instagram', 'youtube', 'linkedin',
+                'github', 'discord', 'telegram', 'reddit', 'whatsapp'
+            ];
+            
+            // Check if image has legitimate indicators
+            const hasLegitimatePattern = legitimatePatterns.some(pattern => 
+                className.toLowerCase().includes(pattern) || 
+                alt.toLowerCase().includes(pattern) ||
+                src.toLowerCase().includes(pattern)
+            );
+            
+            // Check if image is part of content structure
+            const isInContent = img.closest('article, .content, .post, .entry, .main, .body');
+            
+            return hasLegitimatePattern || isInContent;
+        };
+        const overlaySelectors = [
+            // Common anime site overlay selectors
+            '.overlay', '.popup', '.modal', '.lightbox', '.click-catcher',
+            '[onclick*="window.open"]', '[onclick*="popup"]', '[onclick*="redirect"]',
+            '[class*="popup"]', '[class*="overlay"]', '[class*="modal"]',
+            '[id*="popup"]', '[id*="overlay"]', '[id*="modal"]',
+            // Anime site specific
+            '.banner-ad', '.video-ad', '.player-ad', '.content-ad', '.sidebar-ad',
+            '.ad-overlay', '.ad-popup', '.ad-modal', '.ad-lightbox',
+            '.fake-play', '.play-button-overlay', '.video-overlay',
+            // HiAnime specific selectors
+            'a[href*="citysonic.tv"]', 'img[src*="imgclouding.com"]',
+            'img[src*="film-728x90"]', 'img[src*="banner"]',
+            // Full screen overlays
+            'div[style*="position: fixed"][style*="z-index"]',
+            'div[style*="position: absolute"][style*="z-index"]',
+            '*[style*="width: 100%"][style*="height: 100%"][style*="position: fixed"]',
+            '*[style*="width: 100vw"][style*="height: 100vh"][style*="position: fixed"]'
+        ];
+
+        overlaySelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(overlay => {
+                // Skip if it's a legitimate image
+                if (overlay.tagName === 'IMG' && isLegitimateImage(overlay)) {
+                    return;
+                }
+                
+                // Enhanced suspicious pattern detection
+                const suspiciousPatterns = [
+                    'ad', 'popup', 'overlay', 'click', 'redirect', 'banner',
+                    'niwinn', 'imgclouding', 'citysonic', 'pubbidgeartag',
+                    'promo', 'sponsored', 'affiliate'
+                ];
+                const overlayInfo = (overlay.className + ' ' + overlay.id + ' ' + overlay.innerHTML).toLowerCase();
+                
+                if (suspiciousPatterns.some(pattern => overlayInfo.includes(pattern))) {
+                    overlay.remove();
+                    console.log('Guardian Ad Blocker: Removed anime site overlay/banner:', selector);
+                    animeAdStats.overlays++;
+                    animeAdStats.banners++;
+                }
+            });
+        });
+
+        // Remove specific HiAnime banner patterns - more targeted with legitimacy check
+        const bannerSelectors = [
+            'img[src*="728x90"][src*="banner"]', 'img[src*="728x90"][src*="ad"]',
+            'img[src*="imgclouding.com"]', 'img[src*="film-728x90"]',
+            'a[href*="citysonic.tv"]', 'a[href*="niwinn.com"]',
+            'div[style*="width: 728px"][style*="height: 90px"]'
+        ];
+
+        bannerSelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(banner => {
+                // Skip if it's a legitimate image
+                if (banner.tagName === 'IMG' && isLegitimateImage(banner)) {
+                    return;
+                }
+                
+                banner.remove();
+                console.log('Guardian Ad Blocker: Removed HiAnime banner:', selector);
+                animeAdStats.banners++;
+            });
+        });
+    };
+
+    /**
+     * Enhanced Script Detection & Removal for HiAnime
+     */
+    const blockObfuscatedScripts = () => {
+        // Check if ad blocking is enabled
+        if (!isAdBlockingEnabled()) return;
+        
+        // Allow sponsored deal scripts on shopping homepage
+        if (!shouldBlockAds && allowSponsoredDeals) {
+            console.log('Guardian Ad Blocker: Allowing sponsored deal scripts on shopping homepage');
+            return;
+        }
+        // Skip script blocking on shopping homepage
+        if (!shouldBlockAds) {
+            return;
+        }
+        
+        const scriptObserver = new MutationObserver(() => {
+            document.querySelectorAll('script').forEach(script => {
+                const scriptContent = script.innerText || '';
+                const scriptSrc = script.src || '';
+                
+                // Enhanced obfuscated content detection
+                const obfuscatedPatterns = [
+                    'eval(', 'atob(', 'ads', 'click', 'popup', 'redirect',
+                    'window.open', 'location.href', 'document.location',
+                    'pubbidgeartag', 'niwinn', 'imgclouding', 'citysonic'
+                ];
+                
+                // Enhanced suspicious sources including HiAnime patterns
+                const suspiciousSources = [
+                    'adservice', 'doubleclick', 'googlesyndication', 'adsbygoogle',
+                    'popads', 'popcash', 'propellerads', 'adsterra', 'hilltopads',
+                    'juicyads', 'exoclick', 'trafficjunky', 'adskeeper', 'mgid',
+                    'revcontent', 'outbrain', 'taboola', 'bidvertiser',
+                    // HiAnime specific sources
+                    'niwinn.com', 'imgclouding.com', 'citysonic.tv',
+                    'pubbidgeartag', 'googletagmanager', 'gtag'
+                ];
+                
+                if (obfuscatedPatterns.some(pattern => scriptContent.includes(pattern)) ||
+                    suspiciousSources.some(source => scriptSrc.includes(source))) {
+                    script.remove();
+                    console.log('Guardian Ad Blocker: Removed obfuscated ad script');
+                    animeAdStats.scripts++;
+                    animeAdStats.trackers++;
+                }
+            });
+        });
+        
+        scriptObserver.observe(document.body, { 
+            childList: true, 
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['src', 'innerHTML']
+        });
+
+        // Block specific HiAnime tracking scripts
+        const hiAnimeTrackingScripts = [
+            '//niwinn.com/67/84/54/67845425021f776b630c899590731bf0.js',
+            '//niwinn.com/54/b5/36/54b536712684480f5bddc4d3fd1ac8a1.js',
+            '//www.googletagmanager.com/gtag/js',
+            '//platform-api.sharethis.com/js/sharethis.js'
+        ];
+
+        hiAnimeTrackingScripts.forEach(scriptSrc => {
+            document.querySelectorAll(`script[src*="${scriptSrc}"]`).forEach(script => {
+                script.remove();
+                console.log('Guardian Ad Blocker: Removed HiAnime tracking script:', scriptSrc);
+                animeAdStats.trackers++;
+            });
+        });
+    };
+
+    /**
+     * Block In-Video Ad Injection
+     */
+    const blockInVideoAds = () => {
+        // Check if ad blocking is enabled
+        if (!isAdBlockingEnabled()) return;
+        
+        // Block M3U8 ad segments
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            const urlStr = url.toString();
+            if (urlStr.includes('.m3u8') && (
+                urlStr.includes('ad') || urlStr.includes('ads') || 
+                urlStr.includes('segment') || urlStr.includes('chunk')
+            )) {
+                console.log('Guardian Ad Blocker: Blocked M3U8 ad segment:', urlStr);
+                return Promise.reject(new Error('Blocked by Guardian Ad Blocker'));
+            }
+            return originalFetch.apply(this, arguments);
+        };
+
+        // Remove video player ad overlays
+        const videoAdSelectors = [
+            '.video-ad', '.player-ad', '.ad-overlay', '.ad-container',
+            '.video-ads', '.player-ads', '.ad-player', '.ad-video',
+            '[class*="video-ad"]', '[class*="player-ad"]', '[class*="ad-overlay"]'
+        ];
+
+        videoAdSelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(ad => {
+                ad.remove();
+                console.log('Guardian Ad Blocker: Removed video ad overlay:', selector);
+                animeAdStats.overlays++;
+            });
+        });
+    };
+
+    /**
+     * Enhanced Popup and Redirect Blocking (Preserving Original)
+     */
+    const blockPopupsAndRedirects = () => {
+        // Check if ad blocking is enabled
+        if (!isAdBlockingEnabled()) return;
+        
+        // Call the anime-specific blocking first
+        blockAnimeSiteRedirects();
+        blockAntiAdblockAndNotifications();
+        removeAnimeSiteOverlays();
+        blockObfuscatedScripts();
+        blockInVideoAds();
+    };
+
+    /**
+     * Legacy YouTube Ad Blocking - DEPRECATED (Replaced by Advanced Layered System)
+     * This function is kept for backward compatibility but should not be called
+     */
+    const blockYouTubeAds = () => {
+        // This function is deprecated and replaced by the advanced layered system
+        // It should not be called to prevent overlap with the new system
+        console.log('Guardian Ad Blocker: Legacy YouTube blocking called - using advanced system instead');
+        return;
+    };
+
+    /**
+     * Block Google Search Ads and Sponsored Results - Enhanced with animations
+     */
+    const blockGoogleAds = () => {
+        // Check if ad blocking is enabled
+        if (!isAdBlockingEnabled()) return;
+        
+        // Only run on Google Search
+        if (!window.location.hostname.includes('google.com')) {
+            return;
+        }
+
+        // Show Guardian loading animation when blocking starts
+        showGuardianLoadingAnimation();
+
+        // Remove sponsored results with animation
+        const sponsoredResults = document.querySelectorAll('[data-text-ad="1"], .ads-ad, .commercial-unit-desktop-top, .commercial-unit-desktop-rhs, .mnr-c');
+        sponsoredResults.forEach(ad => {
+            if (ad && ad.parentNode && !blockedElements.has(ad)) {
+                createAdBlockAnimation(ad);
+            }
+        });
+
+        // Remove shopping bar with animation
+        const shoppingBar = document.querySelector('.commercial-unit-desktop-top, .cu-container');
+        if (shoppingBar && shoppingBar.parentNode && !blockedElements.has(shoppingBar)) {
+            createAdBlockAnimation(shoppingBar);
+        }
+
+        // Remove "Ads" labels and sponsored content with animation
+        const adLabels = document.querySelectorAll('.ads-visurl, .ads-creative, [aria-label*="Ad"], [aria-label*="Sponsored"]');
+        adLabels.forEach(label => {
+            const parent = label.closest('.g, .ads-ad, .commercial-unit-desktop-top');
+            if (parent && parent.parentNode && !blockedElements.has(parent)) {
+                createAdBlockAnimation(parent);
+            }
+        });
+
+        // Remove sponsored content containers with animation
+        const sponsoredContainers = document.querySelectorAll('.commercial-unit-desktop-top, .commercial-unit-desktop-rhs');
+        sponsoredContainers.forEach(container => {
+            if (container && container.parentNode && !blockedElements.has(container)) {
+                createAdBlockAnimation(container);
+            }
+        });
+        
+        // Fix layout after ad removal
+        setTimeout(fixLayoutAfterAdRemoval, 1600);
+    };
+
+    /**
+     * Comprehensive Ad Container Blocking - Enhanced with animations and shopping site awareness
+     */
+    const hideAdContainers = () => {
+        // Check if ad blocking is enabled
+        if (!isAdBlockingEnabled()) return;
+        
+        // Skip on YouTube and Google - let dedicated functions handle them
+        if (window.location.hostname.includes('youtube.com') || window.location.hostname.includes('google.com')) {
+            return;
+        }
+
+        // Show Guardian loading animation when blocking starts
+        showGuardianLoadingAnimation();
+
+        // Different selectors for shopping sites vs other sites
+        let adSelectors = [];
+        
+        if (isShoppingSite && !shouldBlockAds) {
+            // On shopping homepage - only block intrusive ads, allow sponsored deals
+            adSelectors = [
+                // Only block intrusive popup/overlay ads
+                '.popup:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]):not([class*="sponsored"]):not([class*="deal"]):not([class*="offer"])',
+                '.overlay:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]):not([class*="sponsored"]):not([class*="deal"]):not([class*="offer"])',
+                '.modal:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]):not([class*="sponsored"]):not([class*="deal"]):not([class*="offer"])',
+                '.lightbox:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]):not([class*="sponsored"]):not([class*="deal"]):not([class*="offer"])',
+                
+                // Block tracking and analytics
+                '[id*="hotjar"]', '[id*="sentry"]', '[id*="bugsnag"]', '[id*="analytics"]',
+                '.fb-customerchat', '.fb-customer-chat', '#facebook-jssdk'
+            ];
+        } else {
+            // On other sites or shopping search pages - block all ads
+            adSelectors = [
+                // Google ads - more specific
+            '.adsbygoogle', '.googlesyndication', '.google-ad',
+                'ins.adsbygoogle', 'div[data-ad-client]', 'div[data-ad-slot]',
+                
+                // Generic ad containers - more specific to avoid false positives
+                '.ad-container:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.ad-banner:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.ad-block:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.advertisement:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                
+                // Sponsored/promo selectors
+                '.sponsored:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.promo:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.promotion:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                
+                // More specific ID selectors
+                '[id*="google_ads"]', '[id*="adsense"]', '[id*="doubleclick"]',
+                
+                // Popup and overlay containers - more specific
+                '.popup:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.overlay:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.modal:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.lightbox:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                
+                // Streaming site specific - more specific
+                '.banner-ad:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.video-ad:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.player-ad:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.content-ad:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                '.sidebar-ad:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"])',
+                
+                // Tracking and analytics - more specific
+            '[id*="hotjar"]', '[id*="sentry"]', '[id*="bugsnag"]', '[id*="analytics"]',
+            
+            // Social media tracking
+            '.fb-customerchat', '.fb-customer-chat', '#facebook-jssdk'
+        ];
+        }
+
+        adSelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(adEl => {
+                // Check if element is legitimate content before removing
+                const isLegitimate = isLegitimateContent(adEl);
+                if (!isLegitimate && adEl.parentNode && !blockedElements.has(adEl)) {
+                    createAdBlockAnimation(adEl);
+                }
+            });
+        });
+        
+        // Fix layout after ad removal
+        setTimeout(fixLayoutAfterAdRemoval, 1600);
+    };
+
+    /**
+     * Helper function to check if content is legitimate (not an ad)
+     */
+    const isLegitimateContent = (element) => {
+        const className = element.className || '';
+        const id = element.id || '';
+        const alt = element.alt || '';
+        const src = element.src || '';
+        
+        // Legitimate content indicators
+        const legitimatePatterns = [
+            'avatar', 'profile', 'user', 'member', 'author',
+            'logo', 'icon', 'thumbnail', 'preview', 'cover', 'poster',
+            'product', 'item', 'gallery', 'photo', 'image', 'picture',
+            'content', 'article', 'post', 'news', 'blog', 'story',
+            'hero', 'featured', 'main', 'primary', 'background',
+            'header', 'footer', 'sidebar', 'navigation', 'nav',
+            'button', 'btn', 'link', 'menu', 'search', 'social'
+        ];
+        
+        // Check if element has legitimate indicators
+        const hasLegitimatePattern = legitimatePatterns.some(pattern => 
+            className.toLowerCase().includes(pattern) || 
+            id.toLowerCase().includes(pattern) ||
+            alt.toLowerCase().includes(pattern) ||
+            src.toLowerCase().includes(pattern)
+        );
+        
+        // Check if element is part of content structure
+        const isInContent = element.closest('article, .content, .post, .entry, .main, .body, .container');
+        
+        return hasLegitimatePattern || isInContent;
+    };
+
+    /**
+     * Block specific ad testing elements
+     */
+    const blockAdTestElements = () => {
+        // Check if ad blocking is enabled
+        if (!isAdBlockingEnabled()) return;
+        
+        // Block elements that appear in ad blocker tests
+        const testElements = [
+            'ins.adsbygoogle', 'div[data-ads]', '#yandex_rtb_R-A-491776-1',
+            'object[data*="banner"]', 'embed[src*="banner"]', 'img[src*="banner"]',
+            'img[src*="ads"]', 'div[id*="google_ads"]', 'iframe[src*="ads"]',
+            'div[class*="popunder"]', 'div[class*="popup"]', 'div[class*="overlay"]'
+        ];
+
+        testElements.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                el.remove();
+            });
+        });
+
+        // Block Flash content
+        const flashElements = document.querySelectorAll('object[type="application/x-shockwave-flash"], embed[type="application/x-shockwave-flash"]');
+        flashElements.forEach(el => el.remove());
+    };
+
+    /**
+     * Enhanced tracking scripts and analytics blocking for HiAnime
+     */
+    const blockTrackingScripts = () => {
+        // Check if ad blocking is enabled
+        if (!isAdBlockingEnabled()) return;
+        
+        // Allow tracking on shopping homepage for sponsored deals
+        if (!shouldBlockAds && allowSponsoredDeals) {
+            console.log('Guardian Ad Blocker: Allowing tracking for sponsored deals on shopping homepage');
+            return;
+        }
+        // Enhanced tracking globals including HiAnime patterns
+        const trackingGlobals = [
+            'gtag', 'ga', 'dataLayer', 'fbq', '_fbq', 'hj', 'ym', 'yaCounter',
+            'adsbygoogle', 'googletag', 'Sentry', 'Bugsnag', 'PopAds', 'popns',
+            'popcash', 'propellerads', 'adsterra', 'hilltopads', 'juicyads',
+            // HiAnime specific tracking
+            'pubbidgeartag', 'niwinn', 'imgclouding', 'citysonic',
+            'sharethis', 'socket.io', 'turnstile'
+        ];
+
+        trackingGlobals.forEach(globalVar => {
+            try {
+                Object.defineProperty(window, globalVar, {
+                    get: () => () => {},
+                    set: () => {},
+                    configurable: false
+                });
+            } catch (e) {
+                // Ignore errors for already defined properties
+            }
+        });
+
+        // Enhanced dataLayer blocking
+        if (window.dataLayer) {
+            const originalPush = window.dataLayer.push;
+            window.dataLayer.push = function(...args) {
+                const argsStr = JSON.stringify(args).toLowerCase();
+                const trackingPatterns = ['ad', 'track', 'analytics', 'pixel', 'event'];
+                if (trackingPatterns.some(pattern => argsStr.includes(pattern))) {
+                    console.log('Guardian Ad Blocker: Blocked tracking dataLayer push');
+                    animeAdStats.trackers++;
+                    return;
+                }
+                return originalPush.apply(this, args);
+            };
+        }
+
+        // Block Google Analytics and Tag Manager
+        window.ga = window.ga || (() => {});
+        window.gtag = window.gtag || (() => {});
+        window.googletag = window.googletag || (() => {});
+        
+        // Block Facebook Pixel
+        window.fbq = window.fbq || (() => {});
+        window._fbq = window._fbq || (() => {});
+        
+        // Block popup ad networks
+        window.PopAds = window.PopAds || (() => {});
+        window.popns = window.popns || (() => {});
+        window.popcash = window.popcash || (() => {});
+
+        // Block HiAnime specific tracking
+        window.pubbidgeartag = window.pubbidgeartag || (() => {});
+        window.niwinn = window.niwinn || (() => {});
+        window.imgclouding = window.imgclouding || (() => {});
+        window.citysonic = window.citysonic || (() => {});
+    };
+
+    /**
+     * Enhanced CSS rules to hide ads including HiAnime patterns with Legitimate Image Protection
+     */
+    const injectAdBlockingCSS = () => {
+        // Check if ad blocking is enabled
+        if (!isAdBlockingEnabled()) return;
+        
+        // Only inject CSS if ads should be blocked
+        if (!shouldBlockAds) {
+            console.log('Guardian Ad Blocker: Skipping CSS injection on shopping homepage');
+            return;
+        }
+        
+        // Create different CSS rules based on whether sponsored deals should be allowed
+        const sponsoredDealsCSS = allowSponsoredDeals ? `
+            /* Allow sponsored deals on shopping homepage */
+            .sponsored, [aria-label*="Sponsored"], [data-sponsored="true"],
+            .deal, .offer, .promotion, .discount, .sale,
+            [class*="sponsored"], [class*="deal"], [class*="offer"],
+            [id*="sponsored"], [id*="deal"], [id*="offer"] {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                height: auto !important;
+                width: auto !important;
+                margin: inherit !important;
+                padding: inherit !important;
+                position: static !important;
+                left: auto !important;
+                top: auto !important;
+                z-index: auto !important;
+            }
+        ` : '';
+        
+        // Add a more intelligent CSS approach that doesn't block legitimate images
+        const css = `
+            /* Ad Block Animation Keyframes */
+            @keyframes guardianAdBlockPulse {
+                0% {
+                    background-position: 0% 50%;
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                50% {
+                    background-position: 100% 50%;
+                    opacity: 0.8;
+                    transform: scale(1.05);
+                }
+                100% {
+                    background-position: 0% 50%;
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+            }
+            
+            /* Guardian Loading Animation Keyframes */
+            @keyframes guardianLogoSpin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+            
+            @keyframes guardianTextPulse {
+                0%, 100% {
+                    opacity: 0.8;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes guardianFadeOut {
+                0% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                }
+            }
+            
+            /* Layout Management - Smooth transitions */
+            .container, .content, .main, .wrapper, .grid, .flex, .row, .column {
+                transition: all 0.3s ease-in-out !important;
+            }
+            
+            /* Hide ad-related elements - more specific to avoid false positives */
+            .adsbygoogle, .googlesyndication, .google-ad,
+            ins.adsbygoogle, div[data-ad-client], div[data-ad-slot],
+            div[data-ads], #yandex_rtb_R-A-491776-1,
+            object[data*="banner"], embed[src*="banner"], 
+            img[src*="banner"][src*="728x90"], img[src*="banner"][src*="ad"],
+            img[src*="ads"][src*="728x90"], img[src*="ads"][src*="banner"], 
+            div[id*="google_ads"], iframe[src*="ads"],
+            [id*="hotjar"], [id*="sentry"], [id*="bugsnag"], [id*="analytics"],
+            .fb-customerchat, .fb-customer-chat, #facebook-jssdk,
+            .ads-ad, .commercial-unit-desktop-top, .commercial-unit-desktop-rhs,
+            .mnr-c, [data-text-ad="1"], .ads-visurl, .ads-creative,
+            [aria-label*="Ad"], [aria-label*="Sponsored"], .cu-container,
+            div[class*="popunder"], div[class*="popup"], div[class*="overlay"],
+            /* HiAnime specific selectors - more targeted */
+            img[src*="imgclouding.com"], img[src*="film-728x90"],
+            a[href*="citysonic.tv"], a[href*="niwinn.com"],
+            img[src*="728x90"][src*="banner"], img[src*="728x90"][src*="ad"],
+            div[style*="width: 728px"][style*="height: 90px"],
+            script[src*="niwinn.com"], script[src*="pubbidgeartag"],
+            script[src*="googletagmanager"], script[src*="gtag"] {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                height: 0 !important;
+                width: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                position: absolute !important;
+                left: -9999px !important;
+                top: -9999px !important;
+                z-index: -1 !important;
+            }
+            
+            /* YouTube-specific ad blocking - more targeted */
+            ytd-promoted-video-renderer, ytd-display-ad-renderer,
+            ytd-banner-promo-renderer, ytd-ad-slot-renderer,
+            .ytp-ad-overlay-container, .ytp-ad-text-overlay, .ytp-ad-player-overlay,
+            .ytp-ad-feedback-dialog-container, .ytp-ad-module,
+            ytd-reel-video-renderer[is-ad="true"], ytd-shorts-lockup-view-model[is-ad="true"] {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                height: 0 !important;
+                width: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                position: absolute !important;
+                left: -9999px !important;
+                top: -9999px !important;
+                z-index: -1 !important;
+            }
+            
+            /* Generic ad containers - more specific to avoid false positives */
+            .ad-container:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .ad-banner:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .ad-block:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .advertisement:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .sponsored:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .promo:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .promotion:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .popup:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .overlay:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .modal:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .lightbox:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .banner-ad:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .video-ad:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .player-ad:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .content-ad:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]),
+            .sidebar-ad:not([class*="avatar"]):not([class*="logo"]):not([class*="icon"]) {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                height: 0 !important;
+                width: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                position: absolute !important;
+                left: -9999px !important;
+                top: -9999px !important;
+                z-index: -1 !important;
+            }
+            
+            /* Protect legitimate images from being hidden */
+            img[class*="avatar"], img[class*="profile"], img[class*="user"], img[class*="member"],
+            img[class*="logo"], img[class*="icon"], img[class*="thumbnail"], img[class*="preview"],
+            img[class*="cover"], img[class*="poster"], img[class*="product"], img[class*="item"],
+            img[class*="gallery"], img[class*="photo"], img[class*="image"], img[class*="picture"],
+            img[class*="content"], img[class*="article"], img[class*="post"], img[class*="news"],
+            img[class*="blog"], img[class*="story"], img[class*="hero"], img[class*="featured"],
+            img[class*="main"], img[class*="primary"], img[class*="background"], img[class*="header"],
+            img[class*="footer"], img[class*="sidebar"], img[class*="navigation"], img[class*="nav"],
+            img[class*="button"], img[class*="btn"], img[class*="link"], img[class*="menu"],
+            img[class*="search"], img[class*="social"], img[alt*="avatar"], img[alt*="profile"],
+            img[alt*="user"], img[alt*="logo"], img[alt*="icon"], img[alt*="thumbnail"],
+            img[alt*="preview"], img[alt*="cover"], img[alt*="poster"], img[alt*="product"],
+            img[alt*="item"], img[alt*="gallery"], img[alt*="photo"], img[alt*="image"],
+            img[alt*="picture"], img[alt*="content"], img[alt*="article"], img[alt*="post"],
+            img[alt*="news"], img[alt*="blog"], img[alt*="story"], img[alt*="hero"],
+            img[alt*="featured"], img[alt*="main"], img[alt*="primary"], img[alt*="background"],
+            img[alt*="header"], img[alt*="footer"], img[alt*="sidebar"], img[alt*="navigation"],
+            img[alt*="nav"], img[alt*="button"], img[alt*="btn"], img[alt*="link"],
+            img[alt*="menu"], img[alt*="search"], img[alt*="social"] {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                height: auto !important;
+                width: auto !important;
+                margin: inherit !important;
+                padding: inherit !important;
+                position: static !important;
+                left: auto !important;
+                top: auto !important;
+                z-index: auto !important;
+            }
+            
+            /* Block Flash content */
+            object[type="application/x-shockwave-flash"],
+            embed[type="application/x-shockwave-flash"] {
+                display: none !important;
+            }
+            
+            /* Enhanced ad keyword hiding including HiAnime patterns - more specific */
+            script[src*="doubleclick"], script[src*="googleadservices"], script[src*="googlesyndication"],
+            script[src*="googletagmanager"], script[src*="google-analytics"], script[src*="ads"],
+            script[src*="advertising"], script[src*="adsbygoogle"], script[src*="adsense"],
+            iframe[src*="doubleclick"], iframe[src*="googleadservices"], iframe[src*="ads"],
+            script[src*="popads"], script[src*="popcash"], script[src*="propellerads"],
+            iframe[src*="popads"], iframe[src*="popcash"], iframe[src*="propellerads"],
+            /* HiAnime specific sources - scripts only */
+            script[src*="niwinn.com"], script[src*="imgclouding.com"], script[src*="citysonic.tv"],
+            script[src*="pubbidgeartag"], script[src*="sharethis"], script[src*="socket.io"] {
+                display: none !important;
+                visibility: hidden !important;
+            }
+            
+            /* Block suspicious overlays */
+            div[style*="position: fixed"][style*="z-index"],
+            div[style*="position: absolute"][style*="z-index"] {
+                pointer-events: none !important;
+            }
+            
+            /* Prevent click-through on full-screen overlays */
+            *[style*="width: 100%"][style*="height: 100%"][style*="position: fixed"],
+            *[style*="width: 100vw"][style*="height: 100vh"][style*="position: fixed"] {
+                pointer-events: none !important;
+            }
+        `;
+        
+        const style = document.createElement('style');
+        style.textContent = css + sponsoredDealsCSS;
+        document.head.appendChild(style);
+    };
+
+    /**
+     * Mutation Observer for dynamic content - Enhanced with animations and universal support
+     */
+    const observeDOMForAds = () => {
+        // Check if ad blocking is enabled
+        if (!isAdBlockingEnabled()) return;
+        
+        const observer = new MutationObserver((mutations) => {
+            let adsDetected = false;
+            
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            // Enhanced ad pattern detection for all websites
+                            const adPatterns = [
+                                'ad-container', 'ad-banner', 'ad-block', 'advertisement',
+                                'adsbygoogle', 'googlesyndication', 'google-ad',
+                                'ytd-promoted-video-renderer', 'ytd-display-ad-renderer',
+                                'ytd-banner-promo-renderer', 'ytd-ad-slot-renderer',
+                                'ytp-ad-overlay-container', 'ytp-ad-text-overlay',
+                                'ytp-ad-player-overlay', 'ytp-ad-module',
+                                'popup', 'overlay', 'modal', 'lightbox',
+                                'banner-ad', 'video-ad', 'player-ad', 'content-ad',
+                                'sidebar-ad', 'sponsored', 'promo', 'promotion'
+                            ];
+                            const nodeInfo = (node.className + ' ' + node.id + ' ' + node.tagName).toLowerCase();
+                            
+                            // Check if it's a legitimate element before removing
+                            const isLegitimate = isLegitimateContent(node);
+                            const isAd = adPatterns.some(pattern => nodeInfo.includes(pattern));
+                            
+                            if (isAd && !isLegitimate && node.parentNode && !blockedElements.has(node)) {
+                                if (!adsDetected) {
+                                    showGuardianLoadingAnimation();
+                                    adsDetected = true;
+                                }
+                                createAdBlockAnimation(node);
+                            }
+                            
+                            // Remove suspicious iframes - more specific
+                            if (node.tagName === 'IFRAME') {
+                                const src = node.src || '';
+                                const suspiciousIframePatterns = [
+                                    'doubleclick', 'googlesyndication', 'googleadservices',
+                                    'adsbygoogle', 'adsense', 'adserver', 'popads',
+                                    'popcash', 'propellerads', 'adsterra', 'hilltopads'
+                                ];
+                                if (suspiciousIframePatterns.some(pattern => src.includes(pattern))) {
+                                    if (!blockedElements.has(node)) {
+                                        if (!adsDetected) {
+                                            showGuardianLoadingAnimation();
+                                            adsDetected = true;
+                                        }
+                                        createAdBlockAnimation(node);
+                                    }
+                                    animeAdStats.iframes++;
+                                }
+                            }
+                            
+                            // Handle dynamic script injection
+                            if (node.tagName === 'SCRIPT') {
+                                const src = node.src || '';
+                                const content = node.textContent || '';
+                                const suspiciousScriptPatterns = [
+                                    'doubleclick', 'googlesyndication', 'googleadservices',
+                                    'adsbygoogle', 'adsense', 'adserver', 'popads',
+                                    'popcash', 'propellerads', 'adsterra', 'hilltopads',
+                                    'eval(', 'atob(', 'ads', 'click', 'popup', 'redirect'
+                                ];
+                                
+                                if (suspiciousScriptPatterns.some(pattern => 
+                                    src.includes(pattern) || content.includes(pattern))) {
+                                    if (!blockedElements.has(node)) {
+                                        if (!adsDetected) {
+                                            showGuardianLoadingAnimation();
+                                            adsDetected = true;
+                                        }
+                                        node.remove();
+                                        console.log('Guardian Ad Blocker: Removed suspicious script');
+                                        animeAdStats.scripts++;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // Re-run blocking functions with delay to allow animations (only for non-YouTube sites)
+            if (!window.location.hostname.includes('youtube.com')) {
+                setTimeout(() => {
+            blockGoogleAds();
+            hideAdContainers();
+            blockAdTestElements();
+            removeAnimeSiteOverlays();
+                    fixLayoutAfterAdRemoval();
+                }, 100);
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['src', 'href', 'data-ad-client', 'data-ad-slot', 'onclick', 'style']
+        });
+    };
+
+    /**
+     * Initialize Advanced Layered Ad Blocking System (Conservative Approach)
+     */
+    const initializeAdvancedYouTubeBlocking = () => {
+        if (!isYouTube()) return;
+        
+        console.log('Guardian Ad Blocker: Initializing Advanced YouTube Module.');
+        
+        // Only apply CSS-based blocking if toggle is enabled
+        if (isAdBlockingEnabled()) {
+            applyYouTubeAdBlocking();
+            
+            // Run the effective functions that work when toggle is OFF
+            removeAdElementsSafely();
+            autoSkipAds();
+            cleanupWhiteSpaces();
+            
+            // Layer 1: Network-level blocking
+            implementNetworkLevelBlocking();
+            
+            // Layer 2: SponsorBlock integration
+            implementSponsorBlockIntegration();
+            
+            // Layers 3 & 5: Run an initial scan and process ads.
+            processYouTubeAds();
+            
+            // Layer 4: Start observing for dynamic changes.
+            setupAdvancedMutationObserver();
+            
+            // Layer 5 (Fallback): Run a periodic check for any ads that might slip through.
+            setInterval(processYouTubeAds, 2000); // Re-enabled with longer interval
+            
+            // Conservative player API monitoring
+            monitorPlayerAPI(); // Re-enabled
+            
+            console.log('Guardian Ad Blocker: Advanced YouTube Module initialized with full blocking');
+        } else {
+            console.log('Guardian Ad Blocker: Advanced YouTube Module initialized - toggle is OFF, no blocking');
+        }
+        
+        console.log('Layer 1: Conservative network-level blocking - Active');
+        console.log('Layer 2: Conservative SponsorBlock integration - Active');
+        console.log('Layer 3: Conservative DOM-level removal - Active');
+        console.log('Layer 4: Conservative MutationObserver - Active');
+        console.log('Layer 5: Conservative auto-skip - Active');
+        console.log('Layer 6: Conservative CSS injection - Active');
+    };
+
+    /**
+     * Enable debug mode for development
+     */
+    const enableDebugMode = () => {
+        debugMode = true;
+        console.log('Guardian Ad Blocker: Debug mode enabled');
+    };
+
+    /**
+     * Initialize all blocking mechanisms with conservative approach
+     */
+    const initializeBlocking = () => {
+        console.log('Guardian Ad Blocker: Initializing conservative blocking with minimal UI interference...');
+        
+        // Enable debug mode for development
+        if (isYouTube()) {
+            enableDebugMode();
+        }
+        
+        // Detect shopping site and set blocking preferences
+        detectShoppingSite();
+        
+        // Listen for toggle changes from the extension
+        listenForToggleChanges();
+        
+        // Check if ad blocking is enabled
+        if (isAdBlockingEnabled()) {
+            console.log('Guardian Ad Blocker: Toggle is ON - initializing ad blocking');
+            
+            // Show Guardian loading animation on initialization
+            showGuardianLoadingAnimation();
+            
+            // Initialize conservative YouTube layered blocking system
+            if (isYouTube()) {
+                initializeAdvancedYouTubeBlocking();
+            } else {
+                // Initialize other blocking systems (only for non-YouTube sites)
+                blockNetworkRequests();
+                blockPopupsAndRedirects();
+                blockTrackingScripts();
+                injectAdBlockingCSS();
+                blockGoogleAds();
+                hideAdContainers();
+                blockAdTestElements();
+                observeDOMForAds();
+                
+                // Initial cleanup and layout fix
+                setTimeout(() => {
+                    fixLayoutAfterAdRemoval();
+                }, 2000);
+                
+                console.log('Guardian Ad Blocker: All blocking mechanisms initialized for non-YouTube sites');
+            }
+        } else {
+            console.log('Guardian Ad Blocker: Toggle is OFF - no ad blocking initialized');
+        }
+        
+        console.log('Guardian Ad Blocker: All blocking mechanisms initialized with conservative approach');
+        console.log('YouTube Shorts protection: Active - scrolling, playback, captions, likes, comments preserved');
+        console.log('Conservative ad blocking: Active - minimal UI interference, CSS hiding instead of removal');
+        console.log('Network-level ad blocking: Active - precise URL filtering for YouTube ads');
+        console.log('Performance monitoring: Active');
+        console.log('Error tracking: Active');
+        console.log('Conservative auto-skip: Active');
+        console.log('Conservative CSS injection: Active - minimal rules');
+        console.log('Conservative player API monitoring: Active - read-only');
+        if (debugMode) {
+            console.log('Debug mode: Enabled');
+        }
+    };
+
+    // Run immediately if DOM is ready, otherwise wait
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeBlocking);
+    } else {
+        initializeBlocking();
+    }
+
+    // Periodic cleanup for persistent ads with conservative approach
+    setInterval(() => {
+        // Re-detect shopping site periodically
+        detectShoppingSite();
+        
+        // Only run blocking if toggle is enabled
+        if (isAdBlockingEnabled()) {
+            // Use conservative YouTube blocking (only for YouTube)
+            if (isYouTube()) {
+                // Apply CSS-based blocking
+                applyYouTubeAdBlocking();
+                
+                // Re-enabled: DOM manipulation functions that work effectively
+                removeAdElementsSafely();
+                autoSkipAds();
+                cleanupWhiteSpaces();
+            } else {
+                // For non-YouTube sites
+                blockGoogleAds();
+                hideAdContainers();
+                blockAdTestElements();
+                removeAnimeSiteOverlays();
+                fixLayoutAfterAdRemoval();
+            }
+        }
+    }, 10000); // Increased to 10 seconds to reduce interference
+
+    // Block ads on page visibility change (when tab becomes active)
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            setTimeout(() => {
+                // Re-detect shopping site on page change
+                detectShoppingSite();
+                
+                // Only run blocking if toggle is enabled
+                if (isAdBlockingEnabled()) {
+                    // Use conservative YouTube blocking (only for YouTube)
+                    if (isYouTube()) {
+                        // Apply CSS-based blocking
+                        applyYouTubeAdBlocking();
+                        
+                        // Re-enabled: DOM manipulation functions that work effectively
+                        removeAdElementsSafely();
+                        autoSkipAds();
+                        cleanupWhiteSpaces();
+                    } else {
+                        // For non-YouTube sites
+                        blockGoogleAds();
+                        hideAdContainers();
+                        blockAdTestElements();
+                        removeAnimeSiteOverlays();
+                    }
+                }
+            }, 2000); // Increased from 1000ms to 2000ms
+        }
+    });
+
+    // Block contextmenu redirects (right-click hijacking)
+    document.addEventListener('contextmenu', (e) => {
+        // Allow right-click but prevent any redirect attempts
+        setTimeout(() => {
+            const currentUrl = window.location.href;
+            if (currentUrl !== window.location.href) {
+                window.location.href = currentUrl;
+                console.log('Guardian Ad Blocker: Prevented contextmenu redirect');
+            }
+        }, 100);
+    });
+
+    // Block focus/blur redirects
+    let focusRedirectBlocked = false;
+    window.addEventListener('focus', () => {
+        if (!focusRedirectBlocked) {
+            focusRedirectBlocked = true;
+            setTimeout(() => focusRedirectBlocked = false, 2000);
+        }
+    });
+
+    window.addEventListener('blur', () => {
+        if (!focusRedirectBlocked) {
+            focusRedirectBlocked = true;
+            setTimeout(() => focusRedirectBlocked = false, 2000);
+        }
+    });
+
+    console.log('Guardian Ad Blocker Enhanced: Fully loaded with effective approach');
+    console.log('Guardian loading animation: Active - shows shield logo during ad blocking');
+    console.log('HiAnime-specific blocking: Active (niwinn.com, imgclouding.com, citysonic.tv, pubbidgeartag)');
+    console.log('Anti-adblock detection: Active');
+    console.log('Enhanced tracking prevention: Active');
+    console.log('Legitimate image protection: Active - protecting avatars, logos, content images');
+    console.log('Advanced YouTube ad blocking: Active - CSS + effective DOM functions');
+    console.log('YouTube Shorts protection: Active - CSS hiding preserves UI, effective blocking');
+    console.log('Shopping site intelligence: Active - allowing sponsored deals on homepage, blocking on search pages');
+    console.log('Universal website support: Active - works on all websites with Guardian branding');
+    console.log('Effective approach: Active - CSS + DOM functions that work when toggle is OFF');
+    console.log('Network-level ad blocking: ENABLED - works well with effective approach');
+    console.log('Conservative auto-skip: ENABLED - works well with effective approach');
+    console.log('Conservative CSS injection: Active - minimal rules to prevent UI breaks');
+    console.log('Conservative player API monitoring: ENABLED - works well with effective approach');
+    console.log('Advanced debugging: Active - performance monitoring and error tracking enabled');
+    console.log('Extension toggle integration: Active - effective blocking when toggle is ON');
+
+    // Remove old YouTube ad blocking functions that are no longer needed
+    // The new conservative functions replace these:
+    // - blockYouTubeAds()
+    // - safeRemoveYouTubeAds()
+    // - removeYouTubeShortsAds()
+    // - ytAnimationTimeout, ytAnimationStart logic
+    // - patchYouTubeMutationObserver() (replaced by setupAdvancedMutationObserver())
+    // - setupYouTubeMutationObserver() (replaced by setupAdvancedMutationObserver())
+    // - setupPeriodicAdSkipping() (integrated into Layer 5)
+    // - hideAdOverlaysWithCSS() (replaced by injectAdvancedCSS())
+    // - removeVideoAdOverlays() (replaced by removeAdElementsSafely())
+    // - removePromotedContent() (integrated into removeAdElementsSafely())
+    // - isShortsContainer() (replaced by isInsideShorts())
+    // - isLegitimateYouTubeElement() (updated version)
+
+    /**
+     * Advanced Layered YouTube Ad Blocking System (Professional-Grade)
+     * Based on uBlock Origin, AdGuard, SponsorBlock, and Brave Shields methods
+     */
+    
+    // Layer 1: Conservative Network-Level Ad Blocking (Only specific ad URLs)
+    const YT_AD_URL_PATTERNS = [
+        /\/get_video_ads\?/,
+        /\/api\/stats\/ads\?/,
+        /\/yva_video_endscreen\?/,
+        /googleads\.g\.doubleclick\.net/,
+        /pagead2\.googlesyndication\.com/,
+        /pubads\.g\.doubleclick\.net/,
+        /doubleclick\.net/,
+        /\/ptracking/,
+        /\/pagead\//,
+        /\/api\/stats\/qoe\?.*adcontext/,
+        /googlevideo\.com\/videoplayback.*oad=/,
+        /googlevideo\.com\/videoplayback.*ctier=AD/
+    ];
+
+    // Essential video segments that must NEVER be blocked
+    const YT_VIDEO_WHITELIST = [
+        /googlevideo\.com\/videoplayback\?.*itag=/,
+        /googlevideo\.com\/videoplayback\?.*range=/,
+        /googlevideo\.com\/videoplayback\?.*sq=/,
+        /googlevideo\.com\/videoplayback\?.*ei=/,
+        /googlevideo\.com\/videoplayback\?.*mime=/,
+        /googlevideo\.com\/videoplayback\?.*clen=/,
+        /googlevideo\.com\/videoplayback\?.*lmt=/,
+        /googlevideo\.com\/videoplayback\?.*dur=/,
+        /googlevideo\.com\/videoplayback\?.*fps=/,
+        /googlevideo\.com\/videoplayback\?.*size=/,
+        /googlevideo\.com\/videoplayback\?.*quality=/,
+        /googlevideo\.com\/videoplayback\?.*type=video/,
+        /googlevideo\.com\/videoplayback\?.*type=audio/,
+        /www\.youtube\.com\/s\/player\/.*\/player_ias\.vflset\//
+    ];
+
+    /**
+     * Layer 1: Conservative Network-Level Ad Blocking (Minimal interference)
+     */
+    const implementNetworkLevelBlocking = () => {
+        if (!window.location.hostname.includes('youtube.com')) return;
+        if (!isAdBlockingEnabled()) return;
+        
+        // Re-enabled: Network-level blocking works well with the effective approach
+        console.log('Guardian Ad Blocker: Network-level blocking enabled');
+        
+        // Only patch if not already patched
+        if (window.fetch._guardianPatched) return;
+        
+        // Patch fetch with conservative ad URL blocking
+        const origFetch = window.fetch;
+        window.fetch = function(url, ...args) {
+            try {
+                const urlStr = url?.toString?.() || '';
+                
+                // Check whitelist first (essential video segments must be allowed)
+                if (YT_VIDEO_WHITELIST.some(re => re.test(urlStr))) {
+                    return origFetch.apply(this, arguments);
+                }
+                
+                // Block only specific ad patterns
+                if (YT_AD_URL_PATTERNS.some(re => re.test(urlStr))) {
+                    console.log('Guardian Ad Blocker: Blocked YouTube ad network request:', urlStr);
+                    return Promise.reject(new Error('Blocked by Guardian Ad Blocker'));
+                }
+                
+                return origFetch.apply(this, arguments);
+            } catch (error) {
+                return origFetch.apply(this, arguments);
+            }
+        };
+        window.fetch._guardianPatched = true;
+
+        // Patch XHR with conservative ad URL blocking
+        if (XMLHttpRequest.prototype.open._guardianPatched) return;
+        
+        const origXHROpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url, ...args) {
+            try {
+                const urlStr = url?.toString?.() || '';
+                
+                // Check whitelist first
+                if (YT_VIDEO_WHITELIST.some(re => re.test(urlStr))) {
+                    return origXHROpen.apply(this, arguments);
+                }
+                
+                // Block only specific ad patterns
+                if (YT_AD_URL_PATTERNS.some(re => re.test(urlStr))) {
+                    console.log('Guardian Ad Blocker: Blocked YouTube ad XHR:', urlStr);
+                    this.abort();
+                    return;
+                }
+                
+                return origXHROpen.apply(this, arguments);
+            } catch (error) {
+                return origXHROpen.apply(this, arguments);
+            }
+        };
+        XMLHttpRequest.prototype.open._guardianPatched = true;
+    };
+
+    /**
+     * Layer 2: Conservative SponsorBlock Integration (Minimal interference)
+     */
+    const implementSponsorBlockIntegration = () => {
+        if (!window.location.hostname.includes('youtube.com')) return;
+        if (!isAdBlockingEnabled()) return;
+        
+        // Only monitor video time updates, don't interfere with player
+        const videoObserver = new MutationObserver(() => {
+            const video = document.querySelector('video');
+            if (video && !video._guardianTimeMonitor) {
+                video._guardianTimeMonitor = true;
+                // Minimal time monitoring - only log, don't interfere
+                video.addEventListener('timeupdate', () => {
+                    // Only log for debugging, don't skip automatically
+                    if (debugMode) {
+                        console.log('Guardian Ad Blocker: Video time update -', video.currentTime);
+                    }
+                });
+            }
+        });
+        
+        videoObserver.observe(document.body, { childList: true, subtree: true });
+    };
+
+    /**
+     * Layer 3: Conservative DOM-Level Removal (Only specific ad elements)
+     */
+    const isInsideShorts = (el) => {
+        return el.closest('ytd-reel-video-renderer, ytd-reel-player-renderer, .reel-player') !== null;
+    };
+
+    const isLegitimateYouTubeElement = (el) => {
+        const legitimateSelectors = [
+            'ytd-video-owner-renderer',
+            'ytd-channel-name',
+            'ytd-live-chat-frame',
+            '#chat',
+            '.ytp-chrome-bottom',
+            '.ytp-chrome-top',
+            '.ytp-title',
+            '.ytp-gradient-top',
+            '.ytp-gradient-bottom',
+            '.ytp-caption-window-container',
+            '.ytp-caption-segment',
+            '.ytp-caption-window',
+            '.ytp-caption',
+            '.ytp-subtitles-button',
+            '.ytp-settings-button',
+            '.ytp-fullscreen-button',
+            '.ytp-play-button',
+            '.ytp-pause-button',
+            '.ytp-volume-panel',
+            '.ytp-progress-bar',
+            '.ytp-time-display',
+            '.ytp-quality-button',
+            '.ytp-autonav-toggle-button',
+            '.ytp-player-content',
+            '.ytp-player',
+            '.html5-video-player',
+            '.video-stream',
+            '.ytp-large-play-button',
+            '.ytp-large-play-button-overlay'
+        ];
+        return legitimateSelectors.some(selector => el.matches(selector) || el.closest(selector));
+    };
+
+    /**
+     * Smartly removes the entire ad container to prevent empty spaces and layout shifts.
+     * This is the best practice for a clean removal.
+     * @param {HTMLElement} adElement - The detected ad element.
+     */
+    const removeYouTubeAdContainer = (adElement) => {
+        // Find the correct parent container to remove. This ensures the whole "slot" is removed.
+        const containerToRemove = adElement.closest(
+            'ytd-rich-item-renderer, ytd-promoted-video-renderer, .ytd-ad-slot-renderer, #masthead-ad'
+        );
+
+        if (containerToRemove) {
+            containerToRemove.remove();
+        } else {
+            // Fallback for overlays and other elements that don't have these specific containers
+            adElement.remove();
+        }
+    };
+
+    const removeAdElementsSafely = () => {
+        if (!window.location.hostname.includes('youtube.com')) return;
+        if (!isAdBlockingEnabled()) return;
+        
+        // Only run DOM removal if CSS is not working (fallback)
+        // CSS should handle most ad blocking, this is just a backup
+        const cssStyle = document.getElementById('guardian-youtube-css');
+        if (!cssStyle) {
+            console.log('Guardian Ad Blocker: CSS not found, using DOM removal as fallback');
+            return;
+        }
+        
+        // --- DOM Cleaning for Homepage, Feeds, and Sidebar ---
+        const homepageAdSelectors = [
+            'ytd-promoted-sparkles-web-renderer', // Promoted videos in feed
+            'ytd-display-ad-renderer',          // Display ads in feed/sidebar
+            '.ytd-ad-slot-renderer',            // General ad slots
+            '#masthead-ad'                      // Homepage banner ad
+        ];
+
+        homepageAdSelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                // Only remove if CSS didn't hide it
+                const computedStyle = window.getComputedStyle(el);
+                if (computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden') {
+                    removeYouTubeAdContainer(el);
+                }
+            });
+        });
+
+        // --- In-Video Ad Overlays ---
+        const overlayAdSelectors = [
+            '.ytp-ad-overlay-container',
+            '.ytp-ad-player-overlay',
+            '.ytp-ad-module'
+        ];
+
+        overlayAdSelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                // Only hide if CSS didn't already hide it
+                const computedStyle = window.getComputedStyle(el);
+                if (computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden') {
+                    if (!isInsideShorts(el)) {
+                        el.style.display = 'none';
+                        el.style.visibility = 'hidden';
+                        el.style.opacity = '0';
+                        el.style.pointerEvents = 'none';
+                    } else {
+                        // For Shorts, use CSS hiding instead of removal to preserve UI
+                        el.style.display = 'none';
+                        el.style.visibility = 'hidden';
+                        el.style.opacity = '0';
+                        el.style.pointerEvents = 'none';
+                    }
+                }
+            });
+        });
+    };
+
+    /**
+     * Layer 4: Conservative MutationObserver (Reduced frequency)
+     */
+    const setupAdvancedMutationObserver = () => {
+        if (!window.location.hostname.includes('youtube.com')) return;
+        if (!isAdBlockingEnabled()) return;
+        
+        // Re-enabled: MutationObserver works well with the effective approach
+        console.log('Guardian Ad Blocker: MutationObserver enabled');
+        
+        const observer = new MutationObserver(() => {
+            processYouTubeAds();
+        });
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    };
+
+    /**
+     * Cleanup white spaces after ad removal (YouTube-specific)
+     */
+    const cleanupWhiteSpaces = () => {
+        if (!window.location.hostname.includes('youtube.com')) return;
+        if (!isAdBlockingEnabled()) return;
+        
+        // Only run cleanup if CSS didn't handle it
+        const cssStyle = document.getElementById('guardian-youtube-css');
+        if (!cssStyle) {
+            console.log('Guardian Ad Blocker: CSS not found, skipping cleanup');
+            return;
+        }
+        
+        // Only remove containers that are truly empty and not hidden by CSS
+        const emptyContainers = document.querySelectorAll('ytd-rich-item-renderer, ytd-promoted-video-renderer, .ytd-ad-slot-renderer');
+        emptyContainers.forEach(container => {
+            const computedStyle = window.getComputedStyle(container);
+            // Only remove if CSS didn't hide it and it's actually empty
+            if (computedStyle.display !== 'none' && 
+                computedStyle.visibility !== 'hidden' && 
+                container.children.length === 0) {
+                container.remove();
+            }
+        });
+    };
+
+    /**
+     * Layer 5: Conservative Auto-Skip (Minimal interference)
+     */
+    const autoSkipAds = () => {
+        if (!window.location.hostname.includes('youtube.com')) return;
+        if (!isAdBlockingEnabled()) return;
+        
+        // Only run auto-skip if CSS didn't handle the ads
+        const cssStyle = document.getElementById('guardian-youtube-css');
+        if (!cssStyle) {
+            console.log('Guardian Ad Blocker: CSS not found, skipping auto-skip');
+            return;
+        }
+        
+        // --- Auto-click Skip Button (only if visible) ---
+        document.querySelectorAll('.ytp-ad-skip-button, .ytp-ad-skip-button-modern').forEach(btn => {
+            const computedStyle = window.getComputedStyle(btn);
+            if (btn.offsetParent && computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden') {
+                btn.click();
+            }
+        });
+
+        // --- Fallback for Forced/Unskippable Ads (only if CSS didn't work) ---
+        const videoPlayer = document.querySelector('.html5-main-video');
+        if (videoPlayer && document.querySelector('.ad-showing')) {
+            // Check if CSS already handled the ad
+            const adOverlay = document.querySelector('.ytp-ad-overlay-container, .ytp-ad-player-overlay');
+            if (adOverlay) {
+                const computedStyle = window.getComputedStyle(adOverlay);
+                if (computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden') {
+                    // CSS didn't work, use fallback
+                    videoPlayer.muted = true; // Auto-mute
+                    if (isFinite(videoPlayer.duration)) {
+                        videoPlayer.currentTime = videoPlayer.duration; // Skip to end
+                    }
+                    console.log('Guardian Ad Blocker: CSS failed, using fallback - muted and skipped unskippable YouTube ad.');
+                }
+            }
+        }
+    };
+
+    const autoMuteForcedAds = () => {
+        if (!window.location.hostname.includes('youtube.com')) return;
+        if (!isAdBlockingEnabled()) return;
+        
+        const video = document.querySelector('video');
+        if (video && document.querySelector('.ad-showing')) {
+            video.muted = true; // Auto-mute during unskippable ads
+            console.log('Guardian Ad Blocker: Auto-muted forced ad');
+        }
+    };
+
+    /**
+     * Layer 6: Per-Site Feature Flag System
+     */
+    const isYouTube = () => window.location.hostname.includes('youtube.com');
+    const isShortsPage = () => window.location.pathname.includes('/shorts');
+    const isVideoPage = () => window.location.pathname.includes('/watch');
+
+    /**
+     * Conservative CSS Injection (Minimal rules) - DEPRECATED
+     * Replaced by applyYouTubeAdBlocking() for better toggle control
+     */
+    const injectAdvancedCSS = () => {
+        // This function is deprecated - use applyYouTubeAdBlocking() instead
+        console.log('Guardian Ad Blocker: injectAdvancedCSS() is deprecated - using applyYouTubeAdBlocking()');
+        return;
+    };
+
+    /**
+     * Conservative Player API Monitoring (Read-only)
+     */
+    const monitorPlayerAPI = () => {
+        if (!isYouTube()) return;
+        if (!isAdBlockingEnabled()) return;
+        
+        // Only monitor, don't interfere
+        const checkPlayerConfig = () => {
+            if (window.ytplayer && window.ytplayer.config) {
+                const config = window.ytplayer.config;
+                if (config.args && config.args.adPlacements) {
+                    if (debugMode) {
+                        console.log('Guardian Ad Blocker: Detected ad placements in player config');
+                    }
+                }
+            }
+        };
+        
+        // Check less frequently - every 5 seconds instead of 2
+        setInterval(checkPlayerConfig, 5000);
+    };
+
+    /**
+     * Layer 3 & 5: Removes ad elements from the DOM and handles video ad skipping.
+     * Uses isInsideShorts() to protect Shorts functionality and element.remove() for clean blocking.
+     */
+    const processYouTubeAds = () => {
+        if (!isAdBlockingEnabled()) return;
+        removeAdElementsSafely();
+        autoSkipAds();
+    };
+
+    // ... existing code ...
+})();

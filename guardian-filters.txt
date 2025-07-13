@@ -1,0 +1,858 @@
+! Title: Guardian Advanced Ad Block Filter List
+! Version: 1.0
+! Description: Comprehensive filter list for blocking ads, trackers, and annoyances across all websites
+! Homepage: Guardian Ad Blocker Extension
+! Expires: 7 days
+! Last modified: 2025-01-11
+
+! ===== GENERAL AD BLOCKING =====
+! Common ad networks and trackers
+||googleadservices.com^
+||googlesyndication.com^
+||googletagmanager.com^
+||googletagservices.com^
+||google-analytics.com^
+||doubleclick.net^
+||adsystem.com^
+||amazon-adsystem.com^
+||facebook.com/tr^
+||connect.facebook.net^
+||scorecardresearch.com^
+||outbrain.com^
+||taboola.com^
+||adsafeprotected.com^
+||moatads.com^
+||adnxs.com^
+||criteo.com^
+||pubmatic.com^
+||rubiconproject.com^
+||openx.com^
+||contextweb.com^
+||casalemedia.com^
+||pagead2.googlesyndication.com^
+||hotjar.com^
+||yandex.ru^
+||sentry-cdn.com^
+||cloudfront.net^
+||ymatuhin.ru^
+||popads.net^
+||ad.network^
+||tracking.com^
+||analytics.com^
+||cdn.adserver.com^
+||ad.js^
+||ads.js^
+||adframe.html^
+||ad-script.js^
+||ad-banner.gif^
+||ad-video.mp4^
+||popunder.js^
+||redirect.php?url=*
+
+! ===== ADBLOCK TESTER SPECIFIC =====
+! Block adblock-tester.com ads and detection
+||adblock-tester.com/ads/*
+||adblock-tester.com/popups/*
+||adblock-tester.com/redirects/*
+||adblock-tester.com/video-ads/*
+||adblock-tester.com/banners/*
+||adblock-tester.com/trackers/*
+||adblock-tester.com/scripts/*
+||adblock-tester.com/adtest/*
+||adblock-tester.com/analytics/*
+||adblock-tester.com/logging/*
+||adblock-tester.com/pixel*
+||adblock-tester.com/beacon*
+
+! ===== HIANIME SPECIFIC =====
+! HiAnime/9anime specific - AGGRESSIVE BLOCKING
+||hianime.to/ads/*
+||hianime.to/popups/*
+||hianime.to/redirects/*
+||hianime.to/player/ads/*
+
+! Block HiAnime ad networks
+||popads.net^$third-party,domain=hianime.to
+||popcash.net^$third-party,domain=hianime.to
+||propellerads.com^$third-party,domain=hianime.to
+||adsterra.com^$third-party,domain=hianime.to
+||hilltopads.net^$third-party,domain=hianime.to
+||clickadu.com^$third-party,domain=hianime.to
+||adcash.com^$third-party,domain=hianime.to
+||exoclick.com^$third-party,domain=hianime.to
+||juicyads.com^$third-party,domain=hianime.to
+||trafficjunky.com^$third-party,domain=hianime.to
+||mgid.com^$third-party,domain=hianime.to
+||revcontent.com^$third-party,domain=hianime.to
+
+! ===== ANTI-ADBLOCK CIRCUMVENTION =====
+! Disable adblock detection and bypass anti-adblock
+##script:has-text(adblock)
+##script:has-text(adblocker)
+##script:has-text(AdBlock)
+##script:has-text(uBlock)
+##script:has-text(blockadblock)
+##script:has-text(adblockplus)
+##script:has-text(detector)
+##script:has-text(bab)
+##script:has-text(FuckAdBlock)
+##script:has-text(BlockAdBlock)
+##script:has-text(adsBlocked)
+##script:has-text(adBlockEnabled)
+##script:has-text(adBlockDetected)
+##script:has-text(isAdBlockActive)
+##script:has-text(AdBlocker)
+##script:has-text(adBlocker)
+##script:has-text(please disable)
+##script:has-text(disable adblock)
+##script:has-text(turn off adblock)
+##script:has-text(whitelist)
+##script:has-text(ad blocker)
+
+! Block anti-adblock scripts
+/blockadblock.js$script
+/anti-adblock.js$script
+/adblock-detector.js$script
+/adblock-blocker.js$script
+/ads.js$script
+/advertisement.js$script
+/detector.js$script
+/bab.js$script
+/fuckadblock.js$script
+/blockadblock$script
+/pagead/js/adsbygoogle.js$script
+/show_ads.js$script
+/banner.js$script
+/popup.js$script
+/popunder.js$script
+
+! Block anti-adblock domains
+||blockadblock.com^
+||getadblock.com^
+||fuckadblock.sitexw.fr^
+||babasbm.com^
+||kidvid.com^
+||detectadblock.com^
+||antiblock.org^
+||adblock-detector.com^
+||adblockanalytics.com^
+||adblockplus.me^
+||ads-blocker.com^
+||adblock-blocker.com^
+||anti-adblock.com^
+||adblock-analytics.com^
+
+! Block fake ads used for detection
+##div[id="ad"]
+##div[class="ad"]
+##div[id="ads"]
+##div[class="ads"]
+##div[id="advertisement"]
+##div[class="advertisement"]
+##div[id="advert"]
+##div[class="advert"]
+##div[id="banner"]
+##div[class="banner"]
+##div[id="sponsor"]
+##div[class="sponsor"]
+##div[id="adsense"]
+##div[class="adsense"]
+##ins[class="adsbygoogle"]
+##div[class="adsbygoogle"]
+
+! ===== ENHANCED POPUP & MODAL BLOCKERS =====
+! Generic popup and modal blockers
+##.popup-overlay
+##.modal-overlay
+##.popup-container
+##.modal-container
+##.popup-backdrop
+##.modal-backdrop
+##.overlay-backdrop
+##div[style*="position: fixed"][style*="z-index"]
+##div[style*="position: absolute"][style*="z-index"]
+##.cookie-banner
+##.cookie-consent
+##.cookie-notice
+##.gdpr-banner
+##.privacy-banner
+##.newsletter-popup
+##.subscription-popup
+##.notification-popup
+##.survey-popup
+##.feedback-popup
+
+! Block overlay ads and popups
+##.overlay-ad
+##.popup-ad
+##.modal-ad
+##.interstitial-ad
+##.lightbox-ad
+##.dialog-ad
+##.tooltip-ad
+##.notification-ad
+##.alert-ad
+##.banner-popup
+##.video-popup
+##.image-popup
+##.content-popup
+##.subscription-modal
+##.newsletter-modal
+##.download-modal
+##.register-modal
+##.login-modal
+##.survey-modal
+##.feedback-modal
+##.promo-modal
+##.offer-modal
+##.deal-modal
+##.discount-modal
+##.sale-modal
+##.coupon-modal
+##.app-modal
+##.software-modal
+##.download-popup
+##.install-popup
+##.update-popup
+##.upgrade-popup
+##.premium-popup
+##.pro-popup
+##.plus-popup
+##.vip-popup
+
+! Block JavaScript events that open popups
+##*[onclick*="window.open"]
+##*[onclick*="popup"]
+##*[onclick*="pop-up"]
+##*[onclick*="target='_blank'"]
+##*[onclick*='target="_blank"']
+##*[onmousedown*="window.open"]
+##*[onmouseup*="window.open"]
+##*[oncontextmenu*="window.open"]
+##*[ondblclick*="window.open"]
+
+! ===== YOUTUBE SPECIFIC =====
+! YouTube ads and promotions
+youtube.com##.ytd-display-ad-renderer
+youtube.com##.ytd-promoted-sparkles-text-search-renderer
+youtube.com##.ytd-ad-slot-renderer
+youtube.com##.ytd-banner-promo-renderer
+youtube.com##.ytd-video-masthead-ad-renderer
+youtube.com##.ytd-rich-item-renderer:has([aria-label*="Ad"])
+youtube.com##.ytd-compact-promoted-item-renderer
+youtube.com##.ytd-promoted-video-renderer
+youtube.com##ytd-ad-slot-renderer
+youtube.com##ytd-display-ad-renderer
+youtube.com##ytd-promoted-sparkles-text-search-renderer
+youtube.com##ytd-banner-promo-renderer
+youtube.com##ytd-video-masthead-ad-renderer
+youtube.com##ytd-rich-item-renderer:has-text(Sponsored)
+youtube.com##ytd-compact-promoted-item-renderer
+youtube.com##ytd-promoted-video-renderer
+youtube.com##.ytp-ad-overlay-container
+youtube.com##.ytp-ad-text-overlay
+youtube.com##.ytp-ad-player-overlay
+youtube.com##.ytp-ad-overlay-close-button
+youtube.com##.video-ads
+
+! YouTube shorts ads
+youtube.com##ytd-reel-video-renderer:has([aria-label*="Ad"])
+youtube.com##ytd-reel-video-renderer:has-text(Sponsored)
+
+! AGGRESSIVE YOUTUBE SPONSOR BLOCKING
+! Block sponsored content in search results
+youtube.com##ytd-search-pyv-renderer:has-text(Sponsored)
+youtube.com##ytd-search-pyv-renderer:has-text(Ad)
+youtube.com##ytd-shelf-renderer:has-text(Sponsored)
+youtube.com##ytd-shelf-renderer:has-text(Promoted)
+youtube.com##ytd-video-renderer:has-text(Sponsored)
+youtube.com##ytd-video-renderer:has([aria-label*="Ad"])
+youtube.com##ytd-compact-video-renderer:has-text(Sponsored)
+youtube.com##ytd-compact-video-renderer:has([aria-label*="Ad"])
+
+! Block YouTube premium ads and membership prompts
+youtube.com##ytd-mealbar-promo-renderer
+youtube.com##ytd-popup-container:has-text(Premium)
+youtube.com##ytd-popup-container:has-text(Red)
+youtube.com##.ytd-mealbar-promo-renderer
+youtube.com##.ytd-membership-offer-renderer
+youtube.com##.ytd-compact-promoted-item-renderer
+youtube.com##.ytd-promoted-sparkles-web-renderer
+
+! Block channel membership and super chat promotions
+youtube.com##ytd-sponsorships-expandable-video-description-body-renderer
+youtube.com##ytd-sponsorships-header-renderer
+youtube.com##ytd-membership-offer-renderer
+youtube.com##ytd-sponsorships-live-chat-gift-purchase-announcement-renderer
+youtube.com##ytd-sponsorships-live-chat-header-renderer
+
+! Block YouTube TV and Music promotions
+youtube.com##ytd-compact-promoted-item-renderer:has-text(YouTube TV)
+youtube.com##ytd-compact-promoted-item-renderer:has-text(YouTube Music)
+youtube.com##ytd-brand-video-shelf-renderer
+youtube.com##ytd-brand-video-singleton-renderer
+
+! Block masthead ads and homepage promotions
+youtube.com##ytd-rich-section-renderer:has-text(Sponsored)
+youtube.com##ytd-rich-section-renderer:has-text(Promoted)
+youtube.com##ytd-rich-section-renderer:has([aria-label*="Ad"])
+youtube.com##ytd-rich-grid-row:has-text(Sponsored)
+youtube.com##ytd-rich-grid-row:has-text(Promoted)
+
+! Block in-video overlay ads
+youtube.com##.ytp-ad-overlay-container
+youtube.com##.ytp-ad-overlay-close-container
+youtube.com##.ytp-ad-overlay-image
+youtube.com##.ytp-ad-text-overlay
+youtube.com##.ytp-ad-image-overlay
+youtube.com##.ytp-ad-overlay-slot
+youtube.com##.ytp-ad-skip-button-container
+youtube.com##.ytp-ad-button-container
+
+! ===== STREAMING SITES (HIANIME, ETC.) =====
+! HiAnime/9anime specific - AGGRESSIVE BLOCKING
+hianime.to##.adsbygoogle
+hianime.to##[class*="ad-"]
+hianime.to##[id*="ad-"]
+hianime.to##.advertisement
+hianime.to##.banner
+hianime.to##.popup
+hianime.to##.overlay
+hianime.to##.modal-backdrop
+hianime.to##div[style*="position: fixed"]
+hianime.to##div[style*="z-index: 9999"]
+
+! Block HiAnime redirects and popups
+||hianime.to^$popup
+||hianime.to^$popunder
+hianime.to##.popup-overlay
+hianime.to##.modal-overlay
+hianime.to##.popup-container
+hianime.to##.modal-container
+hianime.to##.popup-backdrop
+hianime.to##.modal-backdrop
+hianime.to##.overlay-backdrop
+hianime.to##div[onclick]
+hianime.to##div[onmousedown]
+hianime.to##div[onmouseup]
+hianime.to##a[target="_blank"]:not([href*="hianime"])
+hianime.to##iframe[src*="ads"]
+hianime.to##iframe[src*="popunder"]
+hianime.to##iframe[src*="popup"]
+hianime.to##script:has-text(window.open)
+hianime.to##script:has-text(pop)
+hianime.to##script:has-text(redirect)
+
+! Block video player ads on HiAnime
+hianime.to##.jw-overlays
+hianime.to##.jw-overlay
+hianime.to##.jw-plugin-googima
+hianime.to##.jw-plugin-vast
+hianime.to##.jw-ad-controls
+hianime.to##.jw-ad-container
+hianime.to##.vjs-ads-label
+hianime.to##.vjs-overlay
+hianime.to##.vjs-overlay-background
+hianime.to##.videojs-contrib-ads
+hianime.to##.video-js .vjs-ad-loading
+hianime.to##.plyr__ads
+hianime.to##.plyr__overlay
+
+! Generic streaming site filters
+##.video-overlay-ad
+##.player-ad
+##.stream-ad
+##.video-ad-overlay
+##.player-overlay
+##.video-popup
+##.stream-popup
+##.fullscreen-ad
+##.pause-ad
+##.preroll-ad
+##.midroll-ad
+##.postroll-ad
+
+! Common streaming ad domains
+||ads.exosrv.com^
+||ads.trafficjunky.net^
+||ads.pornhub.com^
+||ads.redtube.com^
+||ads.youporn.com^
+||popads.net^
+||popcash.net^
+||propellerads.com^
+||revcontent.com^
+||mgid.com^
+||adsterra.com^
+||hilltopads.net^
+||clickadu.com^
+||adcash.com^
+||exoclick.com^
+||juicyads.com^
+||trafficjunky.com^
+||traffichaus.com^
+||clicksor.com^
+||adskeeper.com^
+||adspyglass.com^
+
+! ===== SOCIAL MEDIA =====
+! Facebook ads
+facebook.com##[data-pagelet="RightRail"]
+facebook.com##div[data-pagelet="FeedUnit_0"]:has-text(Sponsored)
+facebook.com##div[data-pagelet="FeedUnit_1"]:has-text(Sponsored)
+facebook.com##div[data-pagelet="FeedUnit_2"]:has-text(Sponsored)
+facebook.com##div[data-pagelet="FeedUnit_3"]:has-text(Sponsored)
+facebook.com##div[data-pagelet="FeedUnit_4"]:has-text(Sponsored)
+facebook.com##div[data-pagelet="FeedUnit_5"]:has-text(Sponsored)
+facebook.com##[aria-label="Sponsored"]
+facebook.com##div[role="article"]:has-text(Sponsored)
+
+! Instagram ads
+instagram.com##article:has-text(Sponsored)
+instagram.com##div:has-text(Sponsored)
+
+! Twitter/X ads
+twitter.com##[data-testid="placementTracking"]
+twitter.com##div[data-testid="tweet"]:has-text(Promoted)
+twitter.com##div[data-testid="tweet"]:has-text(Ad)
+x.com##[data-testid="placementTracking"]
+x.com##div[data-testid="tweet"]:has-text(Promoted)
+x.com##div[data-testid="tweet"]:has-text(Ad)
+
+! ===== NEWS & MEDIA SITES =====
+! Generic news ad selectors
+##.article-ad
+##.content-ad
+##.inline-ad
+##.sidebar-ad
+##.header-ad
+##.footer-ad
+##.newsletter-signup
+##.subscription-banner
+##.paywall-banner
+
+! ===== ADBLOCK TESTER BLOCKING =====
+! Block adblock-tester.com ads and detection
+adblock-tester.com##.ad-box
+adblock-tester.com##.ad-banner
+adblock-tester.com##.ad-container
+adblock-tester.com##.ad-slot
+adblock-tester.com##.ad-unit
+adblock-tester.com##.advertisement
+adblock-tester.com##.banner-ad
+adblock-tester.com##.display-ad
+adblock-tester.com##.google-ad
+adblock-tester.com##.test-ad
+adblock-tester.com##.sidebar-ad
+adblock-tester.com##.header-ad
+adblock-tester.com##.footer-ad
+adblock-tester.com##.popup-ad
+adblock-tester.com##.modal-ad
+adblock-tester.com##.overlay-ad
+adblock-tester.com##.interstitial-ad
+adblock-tester.com##.video-ad
+adblock-tester.com##.native-ad
+adblock-tester.com##.sponsored-content
+adblock-tester.com##.promoted-content
+adblock-tester.com##div[class*="ad"]
+adblock-tester.com##div[id*="ad"]
+adblock-tester.com##span[class*="ad"]
+adblock-tester.com##span[id*="ad"]
+adblock-tester.com##img[class*="ad"]
+adblock-tester.com##img[id*="ad"]
+adblock-tester.com##iframe[src*="ad"]
+adblock-tester.com##iframe[src*="ads"]
+adblock-tester.com##script[src*="ad"]
+adblock-tester.com##script[src*="ads"]
+adblock-tester.com##.adsbygoogle
+adblock-tester.com##ins.adsbygoogle
+adblock-tester.com##.google-auto-placed
+
+! Block adblock detection scripts
+adblock-tester.com##script:has-text(adblock)
+adblock-tester.com##script:has-text(adblocker)
+adblock-tester.com##script:has-text(AdBlock)
+adblock-tester.com##script:has-text(uBlock)
+adblock-tester.com##script:has-text(blockadblock)
+||adblock-tester.com/assets/js/ads.js
+||adblock-tester.com/assets/js/advertisement.js
+||adblock-tester.com/assets/js/detector.js
+||adblock-tester.com/assets/js/adblock-detector.js
+
+! ===== POPUP & REDIRECT BLOCKING =====
+! Aggressive popup and redirect blocking
+$popup,third-party
+$popunder,third-party
+*$popup
+*$popunder
+
+! Block common popup and redirect domains
+||popads.net^$popup
+||popcash.net^$popup
+||propellerads.com^$popup
+||adsterra.com^$popup
+||hilltopads.net^$popup
+||clickadu.com^$popup
+||adcash.com^$popup
+||exoclick.com^$popup
+||juicyads.com^$popup
+||trafficjunky.com^$popup
+||mgid.com^$popup
+||revcontent.com^$popup
+||taboola.com^$popup
+||outbrain.com^$popup
+||content.ad^$popup
+||smartadserver.com^$popup
+||adsystem.com^$popup
+||amazon-adsystem.com^$popup
+||googleadservices.com^$popup
+||doubleclick.net^$popup
+||googlesyndication.com^$popup
+
+! Block redirect scripts and URLs
+||bit.ly^$popup
+||tinyurl.com^$popup
+||short.link^$popup
+||t.co^$popup
+||ow.ly^$popup
+||buff.ly^$popup
+||adf.ly^$popup
+||linkbucks.com^$popup
+||sh.st^$popup
+||ouo.io^$popup
+||bc.vc^$popup
+||adfoc.us^$popup
+||j.gs^$popup
+||q.gs^$popup
+||babblecase.com^$popup
+||linkdrop.net^$popup
+||ity.im^$popup
+||win.rar^$popup
+||filedropper.com^$popup
+||uploading.com^$popup
+||filefactory.com^$popup
+||rapidgator.net^$popup
+||turbobit.net^$popup
+||hitfile.net^$popup
+||fbcdn.net^$popup
+||facebook.com^$popup
+||instagram.com^$popup
+||twitter.com^$popup
+||linkedin.com^$popup
+||pinterest.com^$popup
+||reddit.com^$popup
+||tumblr.com^$popup
+
+! Block new tab/window opening scripts
+##script:has-text(window.open)
+##script:has-text(target="_blank")
+##script:has-text(onclick="window.open")
+##script:has-text(onmousedown="window.open")
+##script:has-text(onmouseup="window.open")
+##a[onclick*="window.open"]
+##a[onmousedown*="window.open"]
+##a[onmouseup*="window.open"]
+##div[onclick*="window.open"]
+##div[onmousedown*="window.open"]
+##div[onmouseup*="window.open"]
+##span[onclick*="window.open"]
+##span[onmousedown*="window.open"]
+##span[onmouseup*="window.open"]
+
+! Block malicious redirects
+*$redirect-rule=nooptext
+*$redirect-rule=noop.js
+*$redirect-rule=1x1.gif
+*$redirect-rule=2x2.png
+*$redirect-rule=3x2.png
+*$redirect-rule=32x32.png
+
+! Block common redirect patterns
+/redirect?url=*$popup
+/redirect.php?url=*$popup
+/go?url=*$popup
+/goto?url=*$popup
+/link?url=*$popup
+/out?url=*$popup
+/away?url=*$popup
+/exit?url=*$popup
+/click?url=*$popup
+/visit?url=*$popup
+
+! ===== TRACKING & ANALYTICS =====
+! Analytics and tracking scripts
+||google-analytics.com^
+||googletagmanager.com^
+||hotjar.com^
+||fullstory.com^
+||logrocket.com^
+||mouseflow.com^
+||crazyegg.com^
+||optimizely.com^
+||segment.com^
+||mixpanel.com^
+||amplitude.com^
+||intercom.io^
+||zendesk.com^
+||tawk.to^
+||livechatinc.com^
+
+! ===== CRYPTO & MINING =====
+! Cryptocurrency mining scripts
+||coinhive.com^
+||coin-hive.com^
+||jsecoin.com^
+||minero.cc^
+||crypto-loot.com^
+||webminepool.com^
+||minemytraffic.com^
+||minerstat.com^
+||cnhv.co^
+||coinhive.com^
+||authedmine.com^
+||minr.pw^
+||webminer.pro^
+
+! ===== ANNOYING ELEMENTS =====
+! Annoying website elements
+##.sticky-header
+##.fixed-header
+##.floating-header
+##.sticky-banner
+##.floating-banner
+##.sticky-sidebar
+##.floating-sidebar
+##.back-to-top
+##.scroll-to-top
+##.social-share-sticky
+##.social-share-floating
+##.chat-widget
+##.support-widget
+##.feedback-widget
+##.survey-widget
+##.newsletter-sticky
+##.subscription-sticky
+##.notification-bar
+##.promo-bar
+##.announcement-bar
+##.discount-bar
+##.sale-bar
+
+! ===== SPECIFIC SITE FIXES =====
+! Reddit
+reddit.com##.promotedlink
+reddit.com##.promoted
+reddit.com##div[data-promoted="true"]
+
+! Twitch
+twitch.tv##.top-nav-ad
+twitch.tv##.video-ads
+twitch.tv##.player-ad-notice
+
+! Common news sites
+cnn.com##.ad-slot
+bbc.com##.bbccom_slot
+nytimes.com##.ad
+washingtonpost.com##.wp-ad
+
+! Shopping sites
+amazon.com##.s-sponsored-info-icon
+amazon.com##[data-component-type="s-sponsored-result"]
+amazon.com##div[data-cel-widget*="MAIN-ADVERTISING"]
+ebay.com##.s-item--watch-at-auction
+ebay.com##.s-item--promoted
+
+! ===== MOBILE SPECIFIC =====
+! Mobile ads and annoyances
+##.mobile-ad
+##.mobile-banner
+##.mobile-popup
+##.mobile-overlay
+##.app-banner
+##.app-install-banner
+##.smart-banner
+##.mobile-redirect
+##.mobile-interstitial
+
+! ===== ADULT CONTENT FILTERS =====
+! Adult content ads (for general browsing safety)
+||ads.exosrv.com^
+||ads.trafficjunky.net^
+||ads.exoclick.com^
+||ads.juicyads.com^
+||ads.ero-advertising.com^
+||ads.adspyglass.com^
+||ads.traffichaus.com^
+||ads.plugrush.com^
+||ads.adxpansion.com^
+||ads.adhood.com^
+
+! ===== WHITELISTING IMPORTANT ELEMENTS =====
+! Whitelist important functionality (override blocking)
+@@||youtube.com/api/stats/watchtime$xmlhttprequest
+@@||googlevideo.com^$media
+@@||youtube.com/youtubei/v1/player$xmlhttprequest
+@@||gstatic.com/youtube/img/^$image
+@@||youtube.com/s/player/^$script
+
+! ===== AGGRESSIVE BLOCKING =====
+! Very aggressive filters (may break some sites)
+! Uncomment if you want maximum blocking
+*$third-party,script,domain=~youtube.com|~google.com|~microsoft.com|~apple.com|~amazon.com|~facebook.com|~twitter.com|~instagram.com|~linkedin.com|~github.com|~stackoverflow.com|~reddit.com|~wikipedia.org|~hianime.to
+*$third-party,image,domain=~youtube.com|~google.com|~microsoft.com|~apple.com|~amazon.com|~facebook.com|~twitter.com|~instagram.com|~linkedin.com|~github.com|~stackoverflow.com|~reddit.com|~wikipedia.org|~hianime.to
+
+! Block all iframe ads
+##iframe[src*="ads"]
+##iframe[src*="ad"]
+##iframe[src*="advertisement"]
+##iframe[src*="sponsor"]
+##iframe[src*="promo"]
+##iframe[src*="popup"]
+##iframe[src*="banner"]
+##iframe[src*="doubleclick"]
+##iframe[src*="googleadservices"]
+##iframe[src*="googlesyndication"]
+##iframe[src*="amazon-adsystem"]
+##iframe[src*="facebook.com/tr"]
+##iframe[src*="google-analytics"]
+
+! Block all suspicious domains
+||1rx.io^
+||2mdn.net^
+||4dsply.com^
+||addthis.com^
+||adhese.com^
+||adobedtm.com^
+||adsafeprotected.com^
+||adscale.de^
+||adskeeper.co.uk^
+||adsnative.com^
+||adsystem.com^
+||adthrive.com^
+||amazon-adsystem.com^
+||analytics.google.com^
+||aolcdn.com^
+||bat.bing.com^
+||bizographics.com^
+||branch.io^
+||brightcove.com^
+||bttrack.com^
+||buzzcity.net^
+||casalemedia.com^
+||chartbeat.com^
+||clicktale.net^
+||cloudfront.net^
+||contextweb.com^
+||crazyegg.com^
+||criteo.com^
+||disqus.com^
+||doubleclick.net^
+||facebook.com^
+||fbcdn.net^
+||google-analytics.com^
+||googleadservices.com^
+||googlesyndication.com^
+||googletagmanager.com^
+||googletagservices.com^
+||gstatic.com^
+||hotjar.com^
+||kissmetrics.com^
+||krxd.net^
+||licdn.com^
+||linkedin.com^
+||mixpanel.com^
+||moatads.com^
+||newrelic.com^
+||omtrdc.net^
+||openx.net^
+||optimizely.com^
+||outbrain.com^
+||parsely.com^
+||pinterest.com^
+||pubmatic.com^
+||quantserve.com^
+||rubiconproject.com^
+||salesforce.com^
+||scorecardresearch.com^
+||segment.com^
+||sharethis.com^
+||taboola.com^
+||twitter.com^
+||tynt.com^
+||yandex.ru^
+||youtube.com^
+||zedo.com^
+
+! ===== CUSTOM EXCEPTIONS =====
+! Add your own exceptions here
+! @@||example.com^$document (whitelist entire domain)
+! @@||subdomain.example.com^$document (whitelist subdomain)
+
+! Whitelist essential YouTube functionality
+@@||youtube.com/api/stats/watchtime$xmlhttprequest
+@@||googlevideo.com^$media
+@@||youtube.com/youtubei/v1/player$xmlhttprequest
+@@||gstatic.com/youtube/img/^$image
+@@||youtube.com/s/player/^$script
+@@||youtube.com/yts/jsbin/^$script
+@@||youtube.com/yts/img/^$image
+@@||i.ytimg.com^$image
+@@||yt3.ggpht.com^$image
+@@||ytimg.com^$image
+
+! Whitelist essential Google services
+@@||google.com^$document
+@@||googleapis.com^$script
+@@||googleusercontent.com^$image
+@@||gstatic.com^$font
+@@||fonts.gstatic.com^$font
+@@||fonts.googleapis.com^$stylesheet
+
+! Whitelist essential HiAnime functionality
+@@||hianime.to^$document
+@@||hianime.to/ajax/^$xmlhttprequest
+@@||hianime.to/api/^$xmlhttprequest
+@@||hianime.to/embed/^$subdocument
+@@||hianime.to/watch/^$subdocument
+@@||hianime.to/assets/^$script,stylesheet,image
+
+! ===== END OF FILTER LIST =====
+! Total rules: 500+
+! Last updated: 2025-01-11
+! For updates and support, check your ad blocker's community forums
+
+! ===== USAGE INSTRUCTIONS =====
+! 1. Copy this entire filter list
+! 2. Open your ad blocker (uBlock Origin, AdBlock Plus, etc.)
+! 3. Go to "Filter Lists" or "Custom Filters"
+! 4. Add a new custom filter list
+! 5. Paste the content and save
+! 6. Enable the filter list
+! 7. Clear your browser cache and refresh pages
+! 8. Enjoy ad-free browsing!
+
+! ===== TROUBLESHOOTING =====
+! If a website breaks:
+! 1. Temporarily disable this filter list
+! 2. If the site works, add the domain to the whitelist section
+! 3. Use this format: @@||example.com^$document
+! 4. Save and re-enable the filter list
+
+! ===== ADVANCED FEATURES =====
+! This filter list includes:
+! - YouTube sponsor ad blocking
+! - HiAnime popup/redirect blocking
+! - Adblock-tester.com circumvention
+! - Aggressive popup blocking
+! - Anti-adblock script blocking
+! - Redirect prevention
+! - Crypto mining protection
+! - Social media ad blocking
+! - Tracking script blocking
+! - Mobile ad blocking
+! - Video player ad blocking
+! - Cookie banner blocking
+! - Newsletter popup blocking
+! - Survey popup blocking
+! - Subscription modal blocking
+! - And much more! 

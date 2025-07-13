@@ -17,7 +17,7 @@
     }
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.ts"
   },
   "permissions": [
     "declarativeNetRequest",
@@ -34,14 +34,14 @@
       {
         "id": "guardian_rules",
         "enabled": true,
-        "path": "rules.json"
+        "path": "src/rules.json"
       }
     ]
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["contentScript.js"],
+      "js": ["src/contentScript.js"],
       "run_at": "document_start"
     }
   ]

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Ad Blocking Test - Guardian Ad Blocker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .ad-element {
+            background: #ff6b6b;
+            color: white;
+            padding: 20px;
+            margin: 10px 0;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .essential-element {
+            background: #4ecdc4;
+            color: white;
+            padding: 20px;
+            margin: 10px 0;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .test-result {
+            background: #ffeaa7;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #fdcb6e;
+        }
+        .success {
+            background: #d5f4e6;
+            border-left-color: #27ae60;
+        }
+        .error {
+            background: #ffebee;
+            border-left-color: #e74c3c;
+        }
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .button {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #2980b9;
+        }
+        iframe {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛡️ Guardian Ad Blocker - Enhanced Precision Test</h1>
+    
+    <div class="test-section">
+        <h2>✅ Essential Elements (Should NOT be blocked)</h2>
+        <p>These elements should remain visible and functional:</p>
+        
+        <input type="search" class="search-box" placeholder="Search box - should be visible">
+        <input type="text" class="search-box" placeholder="Text input - should be visible">
+        
+        <div class="essential-element">
+            <h3>Header Navigation</h3>
+            <p>This header element should remain visible</p>
+            <button class="button">Navigation Button</button>
+        </div>
+        
+        <div class="essential-element">
+            <h3>Main Content</h3>
+            <p>This main content area should remain visible</p>
+            <button class="button">Content Button</button>
+        </div>
+        
+        <div class="essential-element">
+            <h3>Video Player</h3>
+            <p>This video player should remain visible</p>
+            <div class="video-player" style="background: #2c3e50; color: white; padding: 20px; text-align: center;">
+                Video Player Controls
+            </div>
+        </div>
+        
+        <div class="essential-element">
+            <h3>Comments Section</h3>
+            <p>This comments section should remain visible</p>
+            <div class="comments-section" style="background: #ecf0f1; padding: 15px; border-radius: 4px;">
+                <p>User comment 1</p>
+                <p>User comment 2</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>❌ Ad Elements (Should be blocked)</h2>
+        <p>These elements should be hidden by the ad blocker:</p>
+        
+        <div class="ad-element" data-ads="true">
+            <h3>Banner Ad (data-ads attribute)</h3>
+            <p>This banner ad should be hidden</p>
+        </div>
+        
+        <div class="ad-element adsbygoogle" data-ad-client="ca-pub-123456789">
+            <h3>Google AdSense Ad</h3>
+            <p>This Google AdSense ad should be hidden</p>
+        </div>
+        
+        <div class="ad-element popup-ad">
+            <h3>Popup Ad</h3>
+            <p>This popup ad should be hidden</p>
+        </div>
+        
+        <div class="ad-element modal-ad">
+            <h3>Modal Ad</h3>
+            <p>This modal ad should be hidden</p>
+        </div>
+        
+        <div class="ad-element outbrain-widget">
+            <h3>Outbrain Widget</h3>
+            <p>This Outbrain widget should be hidden</p>
+        </div>
+        
+        <div class="ad-element taboola-widget">
+            <h3>Taboola Widget</h3>
+            <p>This Taboola widget should be hidden</p>
+        </div>
+        
+        <iframe src="https://googleadservices.com/test" title="Ad iframe"></iframe>
+        <iframe src="https://doubleclick.net/test" title="Ad iframe"></iframe>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎯 YouTube-Style Elements</h2>
+        <p>Testing YouTube-specific ad blocking:</p>
+        
+        <div class="ad-element ytp-ad-overlay-container">
+            <h3>YouTube Ad Overlay</h3>
+            <p>This YouTube ad overlay should be hidden</p>
+        </div>
+        
+        <div class="ad-element ytp-ad-skip-button-container">
+            <h3>YouTube Skip Button</h3>
+            <p>This YouTube skip button should be hidden</p>
+        </div>
+        
+        <div class="ad-element" aria-label="Sponsored">
+            <h3>Sponsored Content</h3>
+            <p>This sponsored content should be hidden</p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔍 Test Results</h2>
+        <div id="test-results">
+            <div class="test-result">
+                <strong>Test Status:</strong> Running tests...
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 Statistics</h2>
+        <p>Check the extension popup to see real-time blocking statistics.</p>
+        <button class="button" onclick="checkStats()">Check Extension Stats</button>
+    </div>
+    
+    <script>
+        // Test script to verify ad blocking functionality
+        function runTests() {
+            const results = document.getElementById('test-results');
+            let testResults = [];
+            
+            // Test 1: Check if ad elements are hidden
+            const adElements = document.querySelectorAll('.ad-element');
+            let hiddenAds = 0;
+            adElements.forEach(element => {
+                const style = window.getComputedStyle(element);
+                if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+                    hiddenAds++;
+                }
+            });
+            
+            if (hiddenAds > 0) {
+                testResults.push(`✅ Ad blocking working: ${hiddenAds}/${adElements.length} ad elements hidden`);
+            } else {
+                testResults.push(`❌ Ad blocking not working: No ad elements hidden`);
+            }
+            
+            // Test 2: Check if essential elements are visible
+            const essentialElements = document.querySelectorAll('.essential-element, .search-box, .button');
+            let visibleEssentials = 0;
+            essentialElements.forEach(element => {
+                const style = window.getComputedStyle(element);
+                if (style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0') {
+                    visibleEssentials++;
+                }
+            });
+            
+            if (visibleEssentials === essentialElements.length) {
+                testResults.push(`✅ Essential elements protected: All ${visibleEssentials} essential elements visible`);
+            } else {
+                testResults.push(`❌ Essential elements not protected: ${visibleEssentials}/${essentialElements.length} essential elements visible`);
+            }
+            
+            // Test 3: Check if iframes are blocked
+            const adIframes = document.querySelectorAll('iframe[src*="googleadservices"], iframe[src*="doubleclick"]');
+            let blockedIframes = 0;
+            adIframes.forEach(iframe => {
+                const style = window.getComputedStyle(iframe);
+                if (style.display === 'none' || style.visibility === 'hidden') {
+                    blockedIframes++;
+                }
+            });
+            
+            if (blockedIframes > 0) {
+                testResults.push(`✅ Iframe blocking working: ${blockedIframes}/${adIframes.length} ad iframes blocked`);
+            } else {
+                testResults.push(`❌ Iframe blocking not working: No ad iframes blocked`);
+            }
+            
+            // Display results
+            results.innerHTML = testResults.map(result => 
+                `<div class="test-result ${result.includes('✅') ? 'success' : 'error'}">${result}</div>`
+            ).join('');
+        }
+        
+        function checkStats() {
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+                chrome.runtime.sendMessage({ type: 'GET_STATS' }, (response) => {
+                    if (response && response.adStats) {
+                        const stats = response.adStats;
+                        alert(`Guardian Ad Blocker Statistics:\n\n` +
+                              `Total Blocked: ${stats.totalBlocked}\n` +
+                              `Banner Ads: ${stats.banner}\n` +
+                              `Video Ads: ${stats.video}\n` +
+                              `Popups: ${stats.popup}\n` +
+                              `Redirects: ${stats.redirect}\n` +
+                              `Other: ${stats.other}\n\n` +
+                              `Current Domain: ${stats.blockedByTab[chrome.tabs.TAB_ID_NONE] || 'N/A'}`);
+                    } else {
+                        alert('Statistics not available. Make sure the extension is loaded.');
+                    }
+                });
+            } else {
+                alert('Chrome extension API not available. Open this page in Chrome with the extension installed.');
+            }
+        }
+        
+        // Run tests after page loads
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 2000); // Wait for content script to run
+        });
+        
+        // Run tests periodically
+        setInterval(runTests, 5000);
+        
+        console.log('Enhanced Ad Blocking Test Page Loaded');
+        console.log('Guardian Ad Blocker should be active and blocking ads while protecting essential elements');
+    </script>
+</body>
+</html> 
