@@ -6,22 +6,6 @@
     const OPENROUTER_API_KEY = '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';
     const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
     
-    // Enhanced AI Configuration
-    const AI_MODELS = {
-        CLAUDE_3_5_SONNET: 'anthropic/claude-3.5-sonnet',
-        GPT_4O: 'openai/gpt-4o',
-        GEMINI_PRO: 'google/gemini-pro'
-    };
-    
-    // Computer Vision and ML Techniques
-    const COMPUTER_VISION_TECHNIQUES = {
-        ELEMENT_ANALYSIS: true,
-        PATTERN_RECOGNITION: true,
-        BEHAVIORAL_ANALYSIS: true,
-        CONTEXT_AWARENESS: true,
-        IMAGE_ANALYSIS: true
-    };
-    
     // AI-powered ad detection cache
     let aiDetectionCache = new Map();
     let aiBlockingEnabled = true;
@@ -32,7 +16,6 @@
     const isAdBlockTester = () => window.location.hostname.includes('adblock-tester.com') || window.location.hostname.includes('checkadblock.ru');
     const isYouTube = () => window.location.hostname.includes('youtube.com');
     const isHiAnime = () => window.location.hostname.includes('hianime.to') || window.location.hostname.includes('hianime.com');
-    const isCNN = () => window.location.hostname.includes('cnn.com') || window.location.hostname.includes('cnn.io');
 
     // Statistics tracking
     let adBlockStats = {
@@ -47,7 +30,7 @@
     };
 
     /**
-     * Enhanced AI-powered ad detection using multiple techniques
+     * AI-powered ad detection using OpenRouter API
      */
     const detectAdWithAI = async (element) => {
         if (!aiBlockingEnabled || !element) return false;
@@ -64,44 +47,6 @@
         try {
             lastAiRequest = now;
             
-            // Enhanced element analysis with computer vision techniques
-            const elementInfo = await analyzeElementWithComputerVision(element);
-            
-            // Multi-model AI detection for better accuracy
-            const aiResults = await performMultiModelDetection(elementInfo);
-            
-            // Behavioral analysis
-            const behavioralScore = await analyzeElementBehavior(element);
-            
-            // Pattern recognition
-            const patternScore = await recognizeAdPatterns(element);
-            
-            // Context awareness
-            const contextScore = await analyzeElementContext(element);
-            
-            // Combine all scores for final decision
-            const finalScore = calculateFinalScore(aiResults, behavioralScore, patternScore, contextScore);
-            const isAd = finalScore > 0.7; // Threshold for ad detection
-            
-            aiDetectionCache.set(elementSignature, isAd);
-            
-            if (isAd) {
-                adBlockStats.aiDetections++;
-                console.log('Guardian: Enhanced AI detected ad element:', elementInfo);
-            }
-            
-            return isAd;
-            
-        } catch (error) {
-            console.log('Guardian: Enhanced AI detection error:', error);
-            return false;
-        }
-    };
-
-    /**
-     * Computer Vision-based element analysis
-     */
-    const analyzeElementWithComputerVision = async (element) => {
             const elementInfo = {
                 tagName: element.tagName,
                 className: element.className,
@@ -109,70 +54,22 @@
                 src: element.src || '',
                 href: element.href || '',
                 textContent: element.textContent?.substring(0, 200) || '',
-            attributes: Array.from(element.attributes).map(attr => `${attr.name}="${attr.value}"`).join(' '),
-            // Enhanced visual analysis
-            dimensions: {
-                width: element.offsetWidth,
-                height: element.offsetHeight,
-                area: element.offsetWidth * element.offsetHeight
-            },
-            position: {
-                x: element.offsetLeft,
-                y: element.offsetTop,
-                zIndex: parseInt(getComputedStyle(element).zIndex) || 0
-            },
-            visibility: {
-                display: getComputedStyle(element).display,
-                visibility: getComputedStyle(element).visibility,
-                opacity: getComputedStyle(element).opacity
-            },
-            // Image analysis for img elements
-            imageAnalysis: element.tagName === 'IMG' ? await analyzeImage(element) : null,
-            // Script analysis
-            scriptAnalysis: element.tagName === 'SCRIPT' ? await analyzeScript(element) : null,
-            // Network analysis
-            networkAnalysis: await analyzeNetworkBehavior(element)
-        };
-        
-        return elementInfo;
-    };
+                attributes: Array.from(element.attributes).map(attr => `${attr.name}="${attr.value}"`).join(' ')
+            };
+            
+            const prompt = `Analyze this HTML element and determine if it's an advertisement, tracking script, or analytics component. Respond with only "AD" if it's an ad/tracking, or "CLEAN" if it's legitimate content.
 
-    /**
-     * Multi-model AI detection for better accuracy
-     */
-    const performMultiModelDetection = async (elementInfo) => {
-        const models = [AI_MODELS.CLAUDE_3_5_SONNET, AI_MODELS.GPT_4O, AI_MODELS.GEMINI_PRO];
-        const results = [];
-        
-        for (const model of models) {
-            try {
-                const result = await queryAIModel(model, elementInfo);
-                results.push(result);
-            } catch (error) {
-                console.log(`Guardian: AI model ${model} failed:`, error);
-            }
-        }
-        
-        return results;
-    };
+Element: ${JSON.stringify(elementInfo)}
 
-    /**
-     * Query individual AI model
-     */
-    const queryAIModel = async (model, elementInfo) => {
-        const prompt = `Analyze this HTML element using advanced computer vision and pattern recognition techniques. Determine if it's an advertisement, tracking script, or analytics component.
+Consider:
+- Scripts with tracking/analytics domains
+- Images with ad-related filenames
+- Elements with ad-related classes/IDs
+- Flash/embed objects
+- Tracking pixels
+- Analytics scripts
 
-Element Analysis:
-${JSON.stringify(elementInfo, null, 2)}
-
-Consider these computer vision and ML techniques:
-1. ELEMENT_ANALYSIS: Visual characteristics, dimensions, positioning
-2. PATTERN_RECOGNITION: Common ad patterns, class names, IDs
-3. BEHAVIORAL_ANALYSIS: Network requests, script behavior
-4. CONTEXT_AWARENESS: Surrounding elements, page context
-5. IMAGE_ANALYSIS: Image dimensions, alt text, src patterns
-
-Respond with only "AD" if it's an ad/tracking, or "CLEAN" if it's legitimate content.`;
+Response:`;
             
             const response = await fetch(OPENROUTER_API_URL, {
                 method: 'POST',
@@ -183,11 +80,11 @@ Respond with only "AD" if it's an ad/tracking, or "CLEAN" if it's legitimate con
                     'X-Title': 'Guardian Ad Blocker'
                 },
                 body: JSON.stringify({
-                model: model,
+                    model: 'anthropic/claude-3.5-sonnet',
                     messages: [
                         {
                             role: 'system',
-                        content: 'You are an expert ad detection system with advanced computer vision and machine learning capabilities. Analyze HTML elements using multiple techniques to identify advertisements, tracking scripts, and analytics components.'
+                            content: 'You are an expert ad detection system. Analyze HTML elements and identify advertisements, tracking scripts, and analytics components.'
                         },
                         {
                             role: 'user',
@@ -200,280 +97,27 @@ Respond with only "AD" if it's an ad/tracking, or "CLEAN" if it's legitimate con
             });
             
             if (!response.ok) {
-            throw new Error(`API request failed: ${response.status}`);
+                console.log('Guardian: AI API request failed:', response.status);
+                return false;
             }
             
             const data = await response.json();
             const aiResponse = data.choices?.[0]?.message?.content?.trim() || '';
             
-        return {
-            model: model,
-            response: aiResponse,
-            isAd: aiResponse.includes('AD'),
-            confidence: calculateConfidence(aiResponse, elementInfo)
-        };
-    };
-
-    /**
-     * Behavioral analysis of elements
-     */
-    const analyzeElementBehavior = async (element) => {
-        let score = 0;
-        
-        // Check for dynamic behavior
-        if (element.tagName === 'SCRIPT') {
-            const scriptContent = element.textContent || '';
-            const adPatterns = [
-                'adsbygoogle', 'google_ad', 'facebook', 'twitter', 'analytics',
-                'tracking', 'pixel', 'beacon', 'gtag', 'ga(', 'fbq(',
-                'doubleclick', 'googlesyndication', 'adserver'
-            ];
+            const isAd = aiResponse.includes('AD');
+            aiDetectionCache.set(elementSignature, isAd);
             
-            score += adPatterns.filter(pattern => 
-                scriptContent.toLowerCase().includes(pattern)
-            ).length * 0.2;
-        }
-        
-        // Check for network requests
-        if (element.src && element.src.includes('ads')) {
-            score += 0.8;
-        }
-        
-        // Check for positioning (ads often have specific positioning)
-        const style = getComputedStyle(element);
-        if (style.position === 'fixed' || style.position === 'absolute') {
-            score += 0.3;
-        }
-        
-        return Math.min(score, 1.0);
-    };
-
-    /**
-     * Pattern recognition for ad detection
-     */
-    const recognizeAdPatterns = async (element) => {
-        let score = 0;
-        
-        // Common ad class patterns
-        const adClassPatterns = [
-            'ad', 'ads', 'advertisement', 'banner', 'sponsored',
-            'promo', 'promotion', 'commercial', 'advert'
-        ];
-        
-        const className = element.className || '';
-        const id = element.id || '';
-        
-        adClassPatterns.forEach(pattern => {
-            if (className.toLowerCase().includes(pattern)) score += 0.3;
-            if (id.toLowerCase().includes(pattern)) score += 0.4;
-        });
-        
-        // Common ad dimensions
-        const width = element.offsetWidth;
-        const height = element.offsetHeight;
-        
-        // Standard ad sizes
-        const adSizes = [
-            { width: 728, height: 90 },   // Leaderboard
-            { width: 300, height: 250 },  // Medium Rectangle
-            { width: 300, height: 600 },  // Half Page
-            { width: 320, height: 50 },   // Mobile Banner
-            { width: 970, height: 90 },   // Large Leaderboard
-            { width: 970, height: 250 },  // Billboard
-            { width: 250, height: 250 },  // Square
-            { width: 160, height: 600 }   // Wide Skyscraper
-        ];
-        
-        adSizes.forEach(size => {
-            if (Math.abs(width - size.width) < 10 && Math.abs(height - size.height) < 10) {
-                score += 0.6;
-            }
-        });
-        
-        return Math.min(score, 1.0);
-    };
-
-    /**
-     * Context awareness analysis
-     */
-    const analyzeElementContext = async (element) => {
-        let score = 0;
-        
-        // Check parent elements
-        let parent = element.parentElement;
-        let depth = 0;
-        
-        while (parent && depth < 5) {
-            const parentClass = parent.className || '';
-            const parentId = parent.id || '';
-            
-            if (parentClass.toLowerCase().includes('ad') || 
-                parentId.toLowerCase().includes('ad') ||
-                parentClass.toLowerCase().includes('sponsored') ||
-                parentId.toLowerCase().includes('sponsored')) {
-                score += 0.4;
-                break;
+            if (isAd) {
+                adBlockStats.aiDetections++;
+                console.log('Guardian: AI detected ad element:', elementInfo);
             }
             
-            parent = parent.parentElement;
-            depth++;
-        }
-        
-        // Check surrounding elements
-        const siblings = Array.from(element.parentElement?.children || []);
-        const adSiblings = siblings.filter(sibling => 
-            (sibling.className || '').toLowerCase().includes('ad') ||
-            (sibling.id || '').toLowerCase().includes('ad')
-        ).length;
-        
-        score += adSiblings * 0.2;
-        
-        return Math.min(score, 1.0);
-    };
-
-    /**
-     * Image analysis for img elements
-     */
-    const analyzeImage = async (element) => {
-        const analysis = {
-            dimensions: {
-                width: element.naturalWidth || element.offsetWidth,
-                height: element.naturalHeight || element.offsetHeight
-            },
-            src: element.src || '',
-            alt: element.alt || '',
-            title: element.title || '',
-            adScore: 0
-        };
-        
-        // Check for ad-related patterns in src
-        const adPatterns = ['ad', 'ads', 'banner', 'sponsored', 'promo'];
-        adPatterns.forEach(pattern => {
-            if (analysis.src.toLowerCase().includes(pattern)) {
-                analysis.adScore += 0.3;
-            }
-        });
-        
-        // Check for tracking pixels (1x1 images)
-        if (analysis.dimensions.width === 1 && analysis.dimensions.height === 1) {
-            analysis.adScore += 0.8;
-        }
-        
-        // Check alt text for ad indicators
-        if (analysis.alt.toLowerCase().includes('ad') || 
-            analysis.alt.toLowerCase().includes('sponsored')) {
-            analysis.adScore += 0.4;
-        }
-        
-        return analysis;
-    };
-
-    /**
-     * Script analysis
-     */
-    const analyzeScript = async (element) => {
-        const analysis = {
-            src: element.src || '',
-            content: element.textContent || '',
-            adScore: 0
-        };
-        
-        // Check for ad-related domains in src
-        const adDomains = [
-            'doubleclick.net', 'googlesyndication.com', 'googleadservices.com',
-            'facebook.com', 'facebook.net', 'twitter.com', 'linkedin.com',
-            'analytics', 'tracking', 'pixel', 'beacon'
-        ];
-        
-        adDomains.forEach(domain => {
-            if (analysis.src.toLowerCase().includes(domain)) {
-                analysis.adScore += 0.6;
-            }
-        });
-        
-        // Check script content for ad patterns
-        const adPatterns = [
-            'adsbygoogle', 'google_ad', 'fbq(', 'gtag(', 'ga(',
-            'dataLayer', 'tracking', 'analytics', 'pixel'
-        ];
-        
-        adPatterns.forEach(pattern => {
-            if (analysis.content.toLowerCase().includes(pattern)) {
-                analysis.adScore += 0.4;
-            }
-        });
-        
-        return analysis;
-    };
-
-    /**
-     * Network behavior analysis
-     */
-    const analyzeNetworkBehavior = async (element) => {
-        const analysis = {
-            requests: [],
-            adScore: 0
-        };
-        
-        // Monitor for network requests from this element
-        if (element.tagName === 'SCRIPT' && element.src) {
-            analysis.requests.push(element.src);
+            return isAd;
             
-            const adPatterns = ['ad', 'ads', 'tracking', 'analytics'];
-            adPatterns.forEach(pattern => {
-                if (element.src.toLowerCase().includes(pattern)) {
-                    analysis.adScore += 0.5;
-                }
-            });
+        } catch (error) {
+            console.log('Guardian: AI detection error:', error);
+            return false;
         }
-        
-        return analysis;
-    };
-
-    /**
-     * Calculate confidence score for AI response
-     */
-    const calculateConfidence = (response, elementInfo) => {
-        let confidence = 0.5; // Base confidence
-        
-        // Higher confidence for clear responses
-        if (response.includes('AD')) confidence += 0.3;
-        if (response.includes('CLEAN')) confidence += 0.2;
-        
-        // Adjust based on element characteristics
-        if (elementInfo.dimensions.area > 10000) confidence += 0.1; // Large elements
-        if (elementInfo.position.zIndex > 100) confidence += 0.1; // High z-index
-        
-        return Math.min(confidence, 1.0);
-    };
-
-    /**
-     * Calculate final score combining all techniques
-     */
-    const calculateFinalScore = (aiResults, behavioralScore, patternScore, contextScore) => {
-        let finalScore = 0;
-        let totalWeight = 0;
-        
-        // AI results (weight: 0.4)
-        if (aiResults.length > 0) {
-            const aiScore = aiResults.filter(r => r.isAd).length / aiResults.length;
-            finalScore += aiScore * 0.4;
-            totalWeight += 0.4;
-        }
-        
-        // Behavioral analysis (weight: 0.2)
-        finalScore += behavioralScore * 0.2;
-        totalWeight += 0.2;
-        
-        // Pattern recognition (weight: 0.2)
-        finalScore += patternScore * 0.2;
-        totalWeight += 0.2;
-        
-        // Context awareness (weight: 0.2)
-        finalScore += contextScore * 0.2;
-        totalWeight += 0.2;
-        
-        return totalWeight > 0 ? finalScore / totalWeight : 0;
     };
 
     /**
@@ -1294,179 +938,6 @@ Respond with only "AD" if it's an ad/tracking, or "CLEAN" if it's legitimate con
         }, 1000);
     };
 
-    // ===== GENERAL BLOCKING =====
-    
-    /**
-     * Initialize general blocking for other sites
-     */
-    const initializeGeneralBlocking = () => {
-        console.log('Guardian: Initializing general ad blocking');
-
-        // Block Google search ads specifically
-        if (window.location.hostname.includes('google.com')) {
-            blockGoogleSearchAds();
-            // Run periodically for dynamic content
-            setInterval(blockGoogleSearchAds, 2000);
-        }
-
-        // Block common ad elements for other sites
-        const generalSelectors = [
-            '.adsbygoogle', '.googlesyndication', '.google-ad',
-            'ins.adsbygoogle', 'div[data-ad-client]', 'div[data-ad-slot]',
-            '.ad-container', '.ad-banner', '.ad-block', '.advertisement',
-            '.sponsored', '.promo', '.promotion', '.popup', '.overlay',
-            '.modal', '.lightbox', '.banner-ad', '.video-ad', '.player-ad',
-            // Video ad containers (from CNN logic)
-            '.video-ad-container', '.video-ad-wrapper',
-            '.ad-video', '.ad-video-container', '.ad-video-wrapper',
-            '.video-player-ad', '.video-player-ad-container',
-            '.cnn-video-ad', '.cnn-video-ad-container',
-            '.turner-video-ad', '.turner-video-ad-container',
-            '.preroll-ad', '.preroll-ad-container', '.preroll-ad-wrapper',
-            '.midroll-ad', '.midroll-ad-container', '.midroll-ad-wrapper',
-            '.postroll-ad', '.postroll-ad-container', '.postroll-ad-wrapper',
-            '.video-overlay-ad', '.video-overlay-ad-container',
-            '.video-banner-ad', '.video-banner-ad-container',
-            '.video-popup-ad', '.video-popup-ad-container',
-            '.cnn-video-player', '.cnn-video-player-ad',
-            '.cnn-video-stream', '.cnn-video-stream-ad',
-            '.cnn-live-video', '.cnn-live-video-ad',
-            '.cnn-breaking-news-video', '.cnn-breaking-news-video-ad',
-            '.turner-video', '.turner-video-ad',
-            '.turner-stream', '.turner-stream-ad',
-            '.turner-live', '.turner-live-ad'
-        ];
-
-        // Inject generalized video ad CSS
-        const injectGeneralVideoAdCSS = () => {
-            const existingStyle = document.getElementById('guardian-general-video-ad-css');
-            if (existingStyle) return;
-            const css = `
-                .video-ad, .video-ad-container, .video-ad-wrapper,
-                .ad-video, .ad-video-container, .ad-video-wrapper,
-                .video-player-ad, .video-player-ad-container,
-                .cnn-video-ad, .cnn-video-ad-container,
-                .turner-video-ad, .turner-video-ad-container,
-                .preroll-ad, .preroll-ad-container, .preroll-ad-wrapper,
-                .midroll-ad, .midroll-ad-container, .midroll-ad-wrapper,
-                .postroll-ad, .postroll-ad-container, .postroll-ad-wrapper,
-                .video-overlay-ad, .video-overlay-ad-container,
-                .video-banner-ad, .video-banner-ad-container,
-                .video-popup-ad, .video-popup-ad-container,
-                .cnn-video-player, .cnn-video-player-ad,
-                .cnn-video-stream, .cnn-video-stream-ad,
-                .cnn-live-video, .cnn-live-video-ad,
-                .cnn-breaking-news-video, .cnn-breaking-news-video-ad,
-                .turner-video, .turner-video-ad,
-                .turner-stream, .turner-stream-ad,
-                .turner-live, .turner-live-ad {
-                    display: none !important;
-                    visibility: hidden !important;
-                    opacity: 0 !important;
-                    height: 0 !important;
-                    width: 0 !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    position: absolute !important;
-                    left: -9999px !important;
-                    top: -9999px !important;
-                    z-index: -1 !important;
-                    pointer-events: none !important;
-                }
-                script[src*="ads"], iframe[src*="ads"], img[src*="ads"] {
-                    display: none !important;
-                    visibility: hidden !important;
-                    opacity: 0 !important;
-                    height: 0 !important;
-                    width: 0 !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    position: absolute !important;
-                    left: -9999px !important;
-                    top: -9999px !important;
-                    z-index: -1 !important;
-                    pointer-events: none !important;
-                }
-            `;
-            const style = document.createElement('style');
-            style.id = 'guardian-general-video-ad-css';
-            style.textContent = css;
-            document.head.appendChild(style);
-            console.log('Guardian: Injected general video ad blocking CSS');
-        };
-        injectGeneralVideoAdCSS();
-
-        setInterval(() => {
-            generalSelectors.forEach(selector => {
-                document.querySelectorAll(selector).forEach(el => el.remove());
-            });
-        }, 2000);
-
-        // Generalized video ad network request blocking
-        const videoAdDomains = [
-            'cnn.com', 'cnn.io', 'turner.com', 'turner.io',
-            'cnn-video.com', 'cnn-video.io', 'turner-video.com',
-            'cnn-streaming.com', 'cnn-streaming.io',
-            'turner-streaming.com', 'turner-streaming.io'
-        ];
-        const videoAdPaths = [
-            '/ads/', '/ad/', '/advertising/', '/video-ad/',
-            '/video/ads/', '/streaming/ads/', '/live/ads/',
-            '/breaking-news/ads/', '/featured/ads/',
-            '/politics/ads/', '/world/ads/', '/business/ads/',
-            '/entertainment/ads/', '/health/ads/', '/technology/ads/',
-            '/sports/ads/', '/weather/ads/', '/travel/ads/',
-            '/style/ads/', '/food/ads/', '/opinion/ads/',
-            '/analysis/ads/', '/investigations/ads/', '/specials/ads/',
-            '/shows/ads/', '/programs/ads/', '/series/ads/',
-            '/documentaries/ads/', '/interviews/ads/', '/press-room/ads/',
-            '/studios/ads/', '/creators/ads/', '/partners/ads/',
-            '/affiliates/ads/', '/distributors/ads/', '/broadcasters/ads/',
-            '/cable/ads/', '/satellite/ads/', '/streaming/ads/',
-            '/digital/ads/', '/mobile/ads/', '/apps/ads/',
-            '/social/ads/', '/newsletters/ads/', '/podcasts/ads/',
-            '/radio/ads/', '/tv/ads/', '/film/ads/', '/music/ads/',
-            '/books/ads/', '/art/ads/', '/theater/ads/', '/gaming/ads/',
-            '/esports/ads/', '/virtual-reality/ads/', '/augmented-reality/ads/',
-            '/artificial-intelligence/ads/', '/machine-learning/ads/',
-            '/blockchain/ads/', '/cryptocurrency/ads/', '/cybersecurity/ads/',
-            '/privacy/ads/', '/data/ads/', '/cloud/ads/', '/5g/ads/',
-            '/6g/ads/', '/quantum/ads/', '/space/ads/', '/climate/ads/',
-            '/environment/ads/', '/sustainability/ads/', '/energy/ads/',
-            '/transportation/ads/', '/automotive/ads/', '/aviation/ads/',
-            '/maritime/ads/', '/rail/ads/', '/roads/ads/', '/infrastructure/ads/',
-            '/construction/ads/', '/real-estate/ads/', '/property/ads/',
-            '/housing/ads/', '/mortgage/ads/', '/insurance/ads/',
-            '/banking/ads/', '/finance/ads/', '/investing/ads/',
-            '/trading/ads/', '/markets/ads/', '/stocks/ads/',
-            '/bonds/ads/', '/commodities/ads/', '/currencies/ads/',
-            '/forex/ads/'
-        ];
-        const originalFetch = window.fetch;
-        window.fetch = function(url, options) {
-            const urlStr = url.toString();
-            if (videoAdDomains.some(domain => urlStr.includes(domain)) && 
-                videoAdPaths.some(path => urlStr.includes(path))) {
-                console.log('Guardian: Blocked general video ad fetch request:', urlStr);
-                adBlockStats.networks++;
-                return Promise.reject(new Error('Blocked by Guardian Ad Blocker'));
-            }
-            return originalFetch.apply(this, arguments);
-        };
-        const originalXHROpen = XMLHttpRequest.prototype.open;
-        XMLHttpRequest.prototype.open = function(method, url, async) {
-            const urlStr = url.toString();
-            if (videoAdDomains.some(domain => urlStr.includes(domain)) && 
-                videoAdPaths.some(path => urlStr.includes(path))) {
-                console.log('Guardian: Blocked general video ad XHR request:', urlStr);
-                adBlockStats.networks++;
-                this.abort();
-                return;
-            }
-            return originalXHROpen.apply(this, arguments);
-        };
-    };
-
     // ===== GOOGLE SEARCH AD BLOCKING =====
     
     /**
@@ -1645,6 +1116,37 @@ Respond with only "AD" if it's an ad/tracking, or "CLEAN" if it's legitimate con
         });
     };
 
+    // ===== GENERAL BLOCKING =====
+    
+    /**
+     * Initialize general blocking for other sites
+     */
+    const initializeGeneralBlocking = () => {
+        console.log('Guardian: Initializing general ad blocking');
+        
+        // Block Google search ads specifically
+        if (window.location.hostname.includes('google.com')) {
+            blockGoogleSearchAds();
+            // Run periodically for dynamic content
+            setInterval(blockGoogleSearchAds, 2000);
+        }
+        
+        // Block common ad elements for other sites
+        const generalSelectors = [
+            '.adsbygoogle', '.googlesyndication', '.google-ad',
+            'ins.adsbygoogle', 'div[data-ad-client]', 'div[data-ad-slot]',
+            '.ad-container', '.ad-banner', '.ad-block', '.advertisement',
+            '.sponsored', '.promo', '.promotion', '.popup', '.overlay',
+            '.modal', '.lightbox', '.banner-ad', '.video-ad', '.player-ad'
+        ];
+        
+        setInterval(() => {
+            generalSelectors.forEach(selector => {
+                document.querySelectorAll(selector).forEach(el => el.remove());
+            });
+        }, 2000);
+    };
+
     // ===== INITIALIZATION =====
 
     /**
@@ -1692,8 +1194,6 @@ Respond with only "AD" if it's an ad/tracking, or "CLEAN" if it's legitimate con
     console.log('HiAnime support: Active with specific selectors');
     console.log('General support: Active for all other sites');
     console.log('AI-powered detection: Active with OpenRouter API');
-    console.log('Computer Vision techniques: Active (Element Analysis, Pattern Recognition, Behavioral Analysis)');
-    console.log('Multi-model AI: Active (Claude 3.5 Sonnet, GPT-4o, Gemini Pro)');
     console.log('Toggle integration: Active');
     console.log('Statistics tracking: Active');
 
