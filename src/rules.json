@@ -1,0 +1,449 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||doubleclick.net^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||googlesyndication.com^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adservice.google.com^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 4,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ads.youtube.com^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 5,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/ads/*",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 6,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hianime.to/ads/*",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 7,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hianime.to/popups/*",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 8,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hianime.to/redirects/*",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 9,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||popads.net^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 10,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ad.network^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 11,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||tracking.com^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 12,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||analytics.com^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 13,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||cdn.adserver.com^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 14,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ad.js^",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 15,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ads.js^",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 16,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adframe.html^",
+      "resourceTypes": ["sub_frame"]
+    }
+  },
+  {
+    "id": 17,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ad-script.js^",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 18,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ad-banner.gif^",
+      "resourceTypes": ["image"]
+    }
+  },
+  {
+    "id": 19,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ad-video.mp4^",
+      "resourceTypes": ["media"]
+    }
+  },
+  {
+    "id": 20,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||popunder.js^",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 21,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||redirect.php?url=*",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 22,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/popups/*",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 23,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/redirects/*",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 24,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/video-ads/*",
+      "resourceTypes": ["media"]
+    }
+  },
+  {
+    "id": 25,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hianime.to/player/ads/*",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "script",
+        "image",
+        "stylesheet",
+        "media",
+        "font",
+        "xmlhttprequest",
+        "ping",
+        "csp_report",
+        "websocket",
+        "webtransport",
+        "webbundle",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 1001,
+    "priority": 2,
+    "action": {
+      "type": "redirect",
+      "redirect": { "regexSubstitution": "\\1" }
+    },
+    "condition": {
+      "regexFilter": "^(.*)[?&](utm_source|utm_medium|utm_campaign|utm_term|utm_content|fbclid|gclid|msclkid|mc_eid|_hsenc|_hsmi|__s|__h|_ga|_gl|_hs|_kx|_openstat|_branch_match_id|_branch_referrer|_branch_link_data|_branch_link_type|_branch_link_id|_branch_link_url|_branch_link_title|_branch_link_description|_branch_link_image|_branch_link_canonical|_branch_link_og_title|_branch_link_og_description|_branch_link_og_image|_branch_link_og_url|_branch_link_og_type|_branch_link_og_site_name|_branch_link_og_locale|_branch_link_og_video|_branch_link_og_audio|_branch_link_og_determiner|_branch_link_og_updated_time|_branch_link_og_ttl|_branch_link_og_url_hash|_branch_link_og_url_path|_branch_link_og_url_query|_branch_link_og_url_fragment|_branch_link_og_url_host|_branch_link_og_url_port|_branch_link_og_url_protocol|_branch_link_og_url_username|_branch_link_og_url_password|_branch_link_og_url_hostname|_branch_link_og_url_pathname|_branch_link_og_url_search|_branch_link_og_url_hash_fragment|_branch_link_og_url_hash_query|_branch_link_og_url_hash_host|_branch_link_og_url_hash_port|_branch_link_og_url_hash_protocol|_branch_link_og_url_hash_username|_branch_link_og_url_hash_password|_branch_link_og_url_hash_hostname|_branch_link_og_url_hash_pathname|_branch_link_og_url_hash_search|_branch_link_og_url_hash_hash_fragment|_branch_link_og_url_hash_hash_query|_branch_link_og_url_hash_hash_host|_branch_link_og_url_hash_hash_port|_branch_link_og_url_hash_hash_protocol|_branch_link_og_url_hash_hash_username|_branch_link_og_url_hash_hash_password|_branch_link_og_url_hash_hash_hostname|_branch_link_og_url_hash_hash_pathname|_branch_link_og_url_hash_hash_search|_branch_link_og_url_hash_hash_hash_fragment|_branch_link_og_url_hash_hash_hash_query|_branch_link_og_url_hash_hash_hash_host|_branch_link_og_url_hash_hash_hash_port|_branch_link_og_url_hash_hash_hash_protocol|_branch_link_og_url_hash_hash_hash_username|_branch_link_og_url_hash_hash_hash_password|_branch_link_og_url_hash_hash_hash_hostname|_branch_link_og_url_hash_hash_hash_pathname|_branch_link_og_url_hash_hash_hash_search|_branch_link_og_url_hash_hash_hash_hash_fragment|_branch_link_og_url_hash_hash_hash_hash_query|_branch_link_og_url_hash_hash_hash_hash_host|_branch_link_og_url_hash_hash_hash_hash_port|_branch_link_og_url_hash_hash_hash_hash_protocol|_branch_link_og_url_hash_hash_hash_hash_username|_branch_link_og_url_hash_hash_hash_hash_password|_branch_link_og_url_hash_hash_hash_hash_hostname|_branch_link_og_url_hash_hash_hash_hash_pathname|_branch_link_og_url_hash_hash_hash_hash_search|_branch_link_og_url_hash_hash_hash_hash_hash_fragment|_branch_link_og_url_hash_hash_hash_hash_hash_query|_branch_link_og_url_hash_hash_hash_hash_hash_host|_branch_link_og_url_hash_hash_hash_hash_hash_port|_branch_link_og_url_hash_hash_hash_hash_hash_protocol|_branch_link_og_url_hash_hash_hash_hash_hash_username|_branch_link_og_url_hash_hash_hash_hash_hash_password|_branch_link_og_url_hash_hash_hash_hash_hash_hostname|_branch_link_og_url_hash_hash_hash_hash_hash_pathname|_branch_link_og_url_hash_hash_hash_hash_hash_search|_branch_link_og_url_hash_hash_hash_hash_hash_hash_fragment|_branch_link_og_url_hash_hash_hash_hash_hash_hash_query|_branch_link_og_url_hash_hash_hash_hash_hash_hash_host|_branch_link_og_url_hash_hash_hash_hash_hash_hash_port|_branch_link_og_url_hash_hash_hash_hash_hash_hash_protocol|_branch_link_og_url_hash_hash_hash_hash_hash_hash_username|_branch_link_og_url_hash_hash_hash_hash_hash_hash_password|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hostname|_branch_link_og_url_hash_hash_hash_hash_hash_hash_pathname|_branch_link_og_url_hash_hash_hash_hash_hash_hash_search|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_fragment|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_query|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_host|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_port|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_protocol|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_username|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_password|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hostname|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_pathname|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_search|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_fragment|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_query|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_host|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_port|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_protocol|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_username|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_password|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hostname|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_pathname|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_search|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_fragment|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_query|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_host|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_port|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_protocol|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_username|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_password|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hostname|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_pathname|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_search|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hash_fragment|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hash_query|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hash_host|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hash_port|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hash_protocol|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hash_username|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hash_password|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hash_hostname|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hash_pathname|_branch_link_og_url_hash_hash_hash_hash_hash_hash_hash_hash_hash_hash_search|(_ref_)?=[^&]*(&|$)",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest"]
+    }
+  }
+]
