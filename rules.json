@@ -5,21 +5,7 @@
     "action": { "type": "block" },
     "condition": {
       "urlFilter": "||doubleclick.net^",
-      "resourceTypes": [
-        "main_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -28,22 +14,7 @@
     "action": { "type": "block" },
     "condition": {
       "urlFilter": "||googlesyndication.com^",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -51,23 +22,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||adservice.google.com^",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||googleadservices.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -75,23 +31,9 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||ads.youtube.com^",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||youtube.com/api/stats/ads*",
+      "domains": ["youtube.com"],
+      "resourceTypes": ["xmlhttprequest"]
     }
   },
   {
@@ -99,23 +41,9 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||adblock-tester.com/ads/*",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||youtube.com/get_video_info?*adformat*",
+      "domains": ["youtube.com"],
+      "resourceTypes": ["xmlhttprequest"]
     }
   },
   {
@@ -123,23 +51,9 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||hianime.to/ads/*",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||youtube.com/pagead/*",
+      "domains": ["youtube.com"],
+      "resourceTypes": ["xmlhttprequest", "sub_frame"]
     }
   },
   {
@@ -147,23 +61,9 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||hianime.to/popups/*",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||youtube.com/ptracking?*",
+      "domains": ["youtube.com"],
+      "resourceTypes": ["xmlhttprequest", "image"]
     }
   },
   {
@@ -171,23 +71,9 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||hianime.to/redirects/*",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||youtube.com/get_video_ads?*",
+      "domains": ["youtube.com"],
+      "resourceTypes": ["xmlhttprequest"]
     }
   },
   {
@@ -195,23 +81,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||popads.net^",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||googleads.g.doubleclick.net^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -219,23 +90,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||ad.network^",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||pubads.g.doubleclick.net^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -243,23 +99,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||tracking.com^",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||taboola.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -267,23 +108,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||analytics.com^",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||outbrain.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -291,23 +117,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||cdn.adserver.com^",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||quantserve.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -315,8 +126,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||ad.js^",
-      "resourceTypes": ["script"]
+      "urlFilter": "||scorecardresearch.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -324,8 +135,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||ads.js^",
-      "resourceTypes": ["script"]
+      "urlFilter": "||zedo.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -333,8 +144,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||adframe.html^",
-      "resourceTypes": ["sub_frame"]
+      "urlFilter": "||adservice.google.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "object", "stylesheet", "font", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   },
   {
@@ -342,8 +153,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||ad-script.js^",
-      "resourceTypes": ["script"]
+      "urlFilter": "||facebook.com/tr^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
     }
   },
   {
@@ -351,8 +162,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||ad-banner.gif^",
-      "resourceTypes": ["image"]
+      "urlFilter": "||facebook.net^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
     }
   },
   {
@@ -360,8 +171,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||ad-video.mp4^",
-      "resourceTypes": ["media"]
+      "urlFilter": "||criteo.com^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
     }
   },
   {
@@ -369,8 +180,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||popunder.js^",
-      "resourceTypes": ["script"]
+      "urlFilter": "||pubmatic.com^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
     }
   },
   {
@@ -378,8 +189,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||redirect.php?url=*",
-      "resourceTypes": ["main_frame", "sub_frame"]
+      "urlFilter": "||rubiconproject.com^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
     }
   },
   {
@@ -387,8 +198,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||adblock-tester.com/popups/*",
-      "resourceTypes": ["main_frame", "sub_frame"]
+      "urlFilter": "||openx.net^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
     }
   },
   {
@@ -396,8 +207,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||adblock-tester.com/redirects/*",
-      "resourceTypes": ["main_frame", "sub_frame"]
+      "urlFilter": "||adnxs.com^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
     }
   },
   {
@@ -405,8 +216,8 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||adblock-tester.com/video-ads/*",
-      "resourceTypes": ["media"]
+      "urlFilter": "||adskeeper.com^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
     }
   },
   {
@@ -414,35 +225,368 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": {
-      "urlFilter": "||hianime.to/player/ads/*",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "script",
-        "image",
-        "stylesheet",
-        "media",
-        "font",
-        "xmlhttprequest",
-        "ping",
-        "csp_report",
-        "websocket",
-        "webtransport",
-        "webbundle",
-        "other"
-      ]
+      "urlFilter": "||popads.net^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "xmlhttprequest", "media"]
     }
   },
   {
-    "id": 1001,
-    "priority": 2,
-    "action": {
-      "type": "redirect",
-      "redirect": { "regexSubstitution": "\\1" }
-    },
+    "id": 26,
+    "priority": 1,
+    "action": { "type": "block" },
     "condition": {
-      "regexFilter": "^(.*)[?&](utm_source|utm_medium|utm_campaign|utm_term|utm_content|fbclid|gclid|msclkid|_ga|_gl|_hsenc|_hsmi|_openstat|_ref)=[^&]*(&|$)",
-      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest"]
+      "urlFilter": "||propellerads.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 27,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adsterra.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 28,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||mgid.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 29,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||revcontent.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 30,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||bidvertiser.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 31,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||juicyads.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 32,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hilltopads.net^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 33,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||trafficjunky.net^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 34,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||comscore.com^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 35,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||amazon-adsystem.com^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 36,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||bing.com/ads^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 37,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adsystem.com^",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 38,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||google.com/search*&tbm=shop*",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 39,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||google.com/search*&tbs=shop*",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 40,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||google.com/search*&source=shopping*",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 41,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||google.com/search*&ved=*&uact=*&oq=*&gs_lcp=*&sclient=*",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 42,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||googleadservices.com/pagead*",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 43,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||doubleclick.net/search*",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 44,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||googlesyndication.com/pagead*",
+      "resourceTypes": ["script", "image", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 45,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/ads/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 46,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||checkadblock.ru/ads/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 47,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/banners/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 48,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||checkadblock.ru/banners/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 49,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/analytics/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 50,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||checkadblock.ru/analytics/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 51,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/tracking/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 52,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||checkadblock.ru/tracking/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 53,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/popups/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 54,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||checkadblock.ru/popups/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 55,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/redirects/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 56,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||checkadblock.ru/redirects/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 57,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adblock-tester.com/video-ads/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 58,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||checkadblock.ru/video-ads/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 59,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hianime.to/ads/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 60,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hianime.to/popups/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 61,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hianime.to/redirects/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 62,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||9anime.to/ads/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 63,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||9anime.to/popups/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+    },
+  {
+    "id": 64,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||crunchyroll.com/ads/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
+    }
+  },
+  {
+    "id": 65,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||crunchyroll.com/popups/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "stylesheet", "media", "font", "xmlhttprequest", "ping", "csp_report", "websocket", "webtransport", "webbundle", "other"]
     }
   }
 ]

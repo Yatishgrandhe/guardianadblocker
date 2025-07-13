@@ -4,14 +4,12 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "build:background": "tsc src/background.ts --outDir ./src --esModuleInterop --module commonjs --target ES6",
+    "build:extension": "tailwindcss -i ./app/globals.css -o ./dist/popup.css --minify && vite build",
+    "build:extension:dev": "tailwindcss -i ./app/globals.css -o ./dist/popup.css --watch",
     "dev": "next dev",
+    "dev:extension": "concurrently \"npm run build:extension:dev\" \"vite\"",
     "lint": "next lint",
-    "start": "next start",
-    "build:popup": "vite build --config vite.popup.config.ts",
-    "dev:popup": "vite --config vite.popup.config.ts",
-    "build:css": "tailwindcss -i ./app/globals.css -o ./public/popup.css --minify",
-    "build:extension": "npm run build:css && npm run build:popup"
+    "start": "next start"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -46,7 +44,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
-    "date-fns": "4.1.0",
+    "concurrently": "^8.2.2",
+    "date-fns": "^3.6.0",
     "embla-carousel-react": "8.5.1",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
@@ -65,14 +64,13 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@types/chrome": "^0.1.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.0.0",
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.8.3",
-    "vite": "^4.0.0",
-    "@vitejs/plugin-react": "^4.0.0"
+    "typescript": "^5",
+    "vite": "^4.0.0"
   }
 }

@@ -16,9 +16,19 @@
     const isAdBlockTester = () => window.location.hostname.includes('adblock-tester.com') || window.location.hostname.includes('checkadblock.ru');
     const isYouTube = () => window.location.hostname.includes('youtube.com');
     const isHiAnime = () => window.location.hostname.includes('hianime.to') || window.location.hostname.includes('hianime.com');
+    const isCNN = () => window.location.hostname.includes('cnn.com') || window.location.hostname.includes('cnn.io');
 
-    // Statistics tracking
+    // Enhanced Statistics tracking - Unified with background script
     let adBlockStats = {
+        totalBlocked: 0,
+        blockedByType: {
+            banner: 0,
+            video: 0,
+            popup: 0,
+            redirect: 0,
+            other: 0
+        },
+        blockedByDomain: {},
         scripts: 0,
         elements: 0,
         networks: 0,
@@ -26,8 +36,57 @@
         inlineScripts: 0,
         mutations: 0,
         aiDetections: 0,
-        aiBlocks: 0
+        aiBlocks: 0,
+        lastUpdated: Date.now()
     };
+
+    // Initialize stats from storage
+    const initializeStats = () => {
+        if (typeof chrome !== 'undefined' && chrome.storage) {
+            chrome.storage.local.get(['adStats'], (result) => {
+                if (result.adStats) {
+                    adBlockStats = { ...adBlockStats, ...result.adStats };
+                }
+            });
+        }
+    };
+
+    // Update and save statistics
+    const updateStats = (type, domain = null, count = 1) => {
+        adBlockStats.totalBlocked += count;
+        adBlockStats.lastUpdated = Date.now();
+        
+        // Update type-specific stats
+        if (type in adBlockStats.blockedByType) {
+            adBlockStats.blockedByType[type] += count;
+        } else {
+            adBlockStats.blockedByType.other += count;
+        }
+        
+        // Update domain-specific stats
+        if (domain) {
+            adBlockStats.blockedByDomain[domain] = (adBlockStats.blockedByDomain[domain] || 0) + count;
+        }
+        
+        // Save to storage
+        if (typeof chrome !== 'undefined' && chrome.storage) {
+            chrome.storage.local.set({ adStats: adBlockStats });
+            
+            // Notify background script
+            chrome.runtime.sendMessage({
+                type: 'UPDATE_STATS',
+                adStats: adBlockStats,
+                domain: domain || window.location.hostname
+            }).catch(() => {
+                // Ignore connection errors
+            });
+        }
+        
+        console.log('Guardian: Updated stats -', type, 'blocked:', count);
+    };
+
+    // Initialize stats on load
+    initializeStats();
 
     /**
      * AI-powered ad detection using OpenRouter API
@@ -108,7 +167,6 @@ Response:`;
             aiDetectionCache.set(elementSignature, isAd);
             
             if (isAd) {
-                adBlockStats.aiDetections++;
                 console.log('Guardian: AI detected ad element:', elementInfo);
             }
             
@@ -137,7 +195,7 @@ Response:`;
         const traditionalBlock = isTraditionalAdElement(element);
         if (traditionalBlock) {
             element.remove();
-            adBlockStats.elements++;
+            updateStats('banner', window.location.hostname);
             console.log('Guardian: Removed element (traditional detection)');
             return;
         }
@@ -146,7 +204,7 @@ Response:`;
         const aiBlock = await detectAdWithAI(element);
         if (aiBlock) {
             element.remove();
-            adBlockStats.aiBlocks++;
+            updateStats('other', window.location.hostname);
             console.log('Guardian: Removed element (AI detection)');
         }
     };
@@ -357,7 +415,7 @@ Response:`;
         window.adsbygoogle = window.adsbygoogle || [];
         window.adsbygoogle.push = () => {};
         
-        adBlockStats.globals += trackingGlobals.length;
+        updateStats('other', window.location.hostname, trackingGlobals.length);
         console.log('Guardian: Blocked', trackingGlobals.length, 'tracking globals');
     };
 
@@ -410,7 +468,7 @@ Response:`;
             if (adDomains.some(domain => urlStr.includes(domain)) || 
                 adPaths.some(path => urlStr.includes(path))) {
                 console.log('Guardian: Blocked fetch request:', urlStr);
-                adBlockStats.networks++;
+                updateStats('redirect', window.location.hostname);
                 return Promise.reject(new Error('Blocked by Guardian Ad Blocker'));
             }
             return originalFetch.apply(this, arguments);
@@ -423,7 +481,7 @@ Response:`;
             if (adDomains.some(domain => urlStr.includes(domain)) || 
                 adPaths.some(path => urlStr.includes(path))) {
                 console.log('Guardian: Blocked XHR request:', urlStr);
-                adBlockStats.networks++;
+                updateStats('redirect', window.location.hostname);
                 this.abort();
                 return;
             }
@@ -442,7 +500,7 @@ Response:`;
                         if (adDomains.some(domain => urlStr.includes(domain)) || 
                             adPaths.some(path => urlStr.includes(path))) {
                             console.log('Guardian: Blocked script creation:', urlStr);
-                            adBlockStats.scripts++;
+                            updateStats('other', window.location.hostname);
                             return;
                         }
                     }
@@ -525,7 +583,7 @@ Response:`;
             document.querySelectorAll(selector).forEach(element => {
                 if (element && element.parentNode) {
                     element.remove();
-                    adBlockStats.elements++;
+                    updateStats('banner', window.location.hostname);
                     console.log('Guardian: Removed AdBlock Tester element:', selector);
                 }
             });
@@ -584,7 +642,7 @@ Response:`;
                 
                 if (trackingPatterns.some(pattern => content.includes(pattern))) {
                     script.remove();
-                    adBlockStats.inlineScripts++;
+                    updateStats('other', window.location.hostname);
                     console.log('Guardian: Removed inline tracking script');
                 }
             }
@@ -824,7 +882,7 @@ Response:`;
                             const isAd = adElementSelectors.some(selector => node.matches(selector));
                             if (isAd) {
                                 node.remove();
-                                adBlockStats.mutations++;
+                                updateStats('banner', window.location.hostname);
                                 console.log('Guardian: Removed AdBlock Tester ad element (mutation)');
                             } else {
                                 // AI-powered detection for non-traditional elements
@@ -832,7 +890,7 @@ Response:`;
                             }
                             node.querySelectorAll && node.querySelectorAll(adElementSelectors.join(', ')).forEach(adEl => {
                                 adEl.remove();
-                                adBlockStats.mutations++;
+                                updateStats('banner', window.location.hostname);
                                 console.log('Guardian: Removed AdBlock Tester ad element (descendant)');
                             });
 
@@ -848,7 +906,7 @@ Response:`;
                                 
                                 if (trackingPatterns.some(pattern => content.includes(pattern))) {
                                     node.remove();
-                                    adBlockStats.inlineScripts++;
+                                    updateStats('other', window.location.hostname);
                                     console.log('Guardian: Removed inline tracking script (mutation)');
                                 }
                             }
@@ -933,9 +991,188 @@ Response:`;
         
         setInterval(() => {
             hiAnimeSelectors.forEach(selector => {
-                document.querySelectorAll(selector).forEach(el => el.remove());
+                document.querySelectorAll(selector).forEach(el => {
+                    el.remove();
+                    updateStats('banner', window.location.hostname);
+                });
             });
         }, 1000);
+    };
+
+    // ===== GENERAL BLOCKING =====
+    
+    /**
+     * Initialize general blocking for other sites
+     */
+    const initializeGeneralBlocking = () => {
+        console.log('Guardian: Initializing general ad blocking');
+
+        // Block Google search ads specifically
+        if (window.location.hostname.includes('google.com')) {
+            blockGoogleSearchAds();
+            // Run periodically for dynamic content
+            setInterval(blockGoogleSearchAds, 2000);
+        }
+
+        // Block common ad elements for other sites
+        const generalSelectors = [
+            '.adsbygoogle', '.googlesyndication', '.google-ad',
+            'ins.adsbygoogle', 'div[data-ad-client]', 'div[data-ad-slot]',
+            '.ad-container', '.ad-banner', '.ad-block', '.advertisement',
+            '.sponsored', '.promo', '.promotion', '.popup', '.overlay',
+            '.modal', '.lightbox', '.banner-ad', '.video-ad', '.player-ad',
+            // Video ad containers (from CNN logic)
+            '.video-ad-container', '.video-ad-wrapper',
+            '.ad-video', '.ad-video-container', '.ad-video-wrapper',
+            '.video-player-ad', '.video-player-ad-container',
+            '.cnn-video-ad', '.cnn-video-ad-container',
+            '.turner-video-ad', '.turner-video-ad-container',
+            '.preroll-ad', '.preroll-ad-container', '.preroll-ad-wrapper',
+            '.midroll-ad', '.midroll-ad-container', '.midroll-ad-wrapper',
+            '.postroll-ad', '.postroll-ad-container', '.postroll-ad-wrapper',
+            '.video-overlay-ad', '.video-overlay-ad-container',
+            '.video-banner-ad', '.video-banner-ad-container',
+            '.video-popup-ad', '.video-popup-ad-container',
+            '.cnn-video-player', '.cnn-video-player-ad',
+            '.cnn-video-stream', '.cnn-video-stream-ad',
+            '.cnn-live-video', '.cnn-live-video-ad',
+            '.cnn-breaking-news-video', '.cnn-breaking-news-video-ad',
+            '.turner-video', '.turner-video-ad',
+            '.turner-stream', '.turner-stream-ad',
+            '.turner-live', '.turner-live-ad'
+        ];
+
+        // Inject generalized video ad CSS
+        const injectGeneralVideoAdCSS = () => {
+            const existingStyle = document.getElementById('guardian-general-video-ad-css');
+            if (existingStyle) return;
+            const css = `
+                .video-ad, .video-ad-container, .video-ad-wrapper,
+                .ad-video, .ad-video-container, .ad-video-wrapper,
+                .video-player-ad, .video-player-ad-container,
+                .cnn-video-ad, .cnn-video-ad-container,
+                .turner-video-ad, .turner-video-ad-container,
+                .preroll-ad, .preroll-ad-container, .preroll-ad-wrapper,
+                .midroll-ad, .midroll-ad-container, .midroll-ad-wrapper,
+                .postroll-ad, .postroll-ad-container, .postroll-ad-wrapper,
+                .video-overlay-ad, .video-overlay-ad-container,
+                .video-banner-ad, .video-banner-ad-container,
+                .video-popup-ad, .video-popup-ad-container,
+                .cnn-video-player, .cnn-video-player-ad,
+                .cnn-video-stream, .cnn-video-stream-ad,
+                .cnn-live-video, .cnn-live-video-ad,
+                .cnn-breaking-news-video, .cnn-breaking-news-video-ad,
+                .turner-video, .turner-video-ad,
+                .turner-stream, .turner-stream-ad,
+                .turner-live, .turner-live-ad {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    height: 0 !important;
+                    width: 0 !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    position: absolute !important;
+                    left: -9999px !important;
+                    top: -9999px !important;
+                    z-index: -1 !important;
+                    pointer-events: none !important;
+                }
+                script[src*="ads"], iframe[src*="ads"], img[src*="ads"] {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    height: 0 !important;
+                    width: 0 !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    position: absolute !important;
+                    left: -9999px !important;
+                    top: -9999px !important;
+                    z-index: -1 !important;
+                    pointer-events: none !important;
+                }
+            `;
+            const style = document.createElement('style');
+            style.id = 'guardian-general-video-ad-css';
+            style.textContent = css;
+            document.head.appendChild(style);
+            console.log('Guardian: Injected general video ad blocking CSS');
+        };
+        injectGeneralVideoAdCSS();
+
+        setInterval(() => {
+            generalSelectors.forEach(selector => {
+                document.querySelectorAll(selector).forEach(el => {
+                    el.remove();
+                    updateStats('banner', window.location.hostname);
+                });
+            });
+        }, 2000);
+
+        // Generalized video ad network request blocking
+        const videoAdDomains = [
+            'cnn.com', 'cnn.io', 'turner.com', 'turner.io',
+            'cnn-video.com', 'cnn-video.io', 'turner-video.com',
+            'cnn-streaming.com', 'cnn-streaming.io',
+            'turner-streaming.com', 'turner-streaming.io'
+        ];
+        const videoAdPaths = [
+            '/ads/', '/ad/', '/advertising/', '/video-ad/',
+            '/video/ads/', '/streaming/ads/', '/live/ads/',
+            '/breaking-news/ads/', '/featured/ads/',
+            '/politics/ads/', '/world/ads/', '/business/ads/',
+            '/entertainment/ads/', '/health/ads/', '/technology/ads/',
+            '/sports/ads/', '/weather/ads/', '/travel/ads/',
+            '/style/ads/', '/food/ads/', '/opinion/ads/',
+            '/analysis/ads/', '/investigations/ads/', '/specials/ads/',
+            '/shows/ads/', '/programs/ads/', '/series/ads/',
+            '/documentaries/ads/', '/interviews/ads/', '/press-room/ads/',
+            '/studios/ads/', '/creators/ads/', '/partners/ads/',
+            '/affiliates/ads/', '/distributors/ads/', '/broadcasters/ads/',
+            '/cable/ads/', '/satellite/ads/', '/streaming/ads/',
+            '/digital/ads/', '/mobile/ads/', '/apps/ads/',
+            '/social/ads/', '/newsletters/ads/', '/podcasts/ads/',
+            '/radio/ads/', '/tv/ads/', '/film/ads/', '/music/ads/',
+            '/books/ads/', '/art/ads/', '/theater/ads/', '/gaming/ads/',
+            '/esports/ads/', '/virtual-reality/ads/', '/augmented-reality/ads/',
+            '/artificial-intelligence/ads/', '/machine-learning/ads/',
+            '/blockchain/ads/', '/cryptocurrency/ads/', '/cybersecurity/ads/',
+            '/privacy/ads/', '/data/ads/', '/cloud/ads/', '/5g/ads/',
+            '/6g/ads/', '/quantum/ads/', '/space/ads/', '/climate/ads/',
+            '/environment/ads/', '/sustainability/ads/', '/energy/ads/',
+            '/transportation/ads/', '/automotive/ads/', '/aviation/ads/',
+            '/maritime/ads/', '/rail/ads/', '/roads/ads/', '/infrastructure/ads/',
+            '/construction/ads/', '/real-estate/ads/', '/property/ads/',
+            '/housing/ads/', '/mortgage/ads/', '/insurance/ads/',
+            '/banking/ads/', '/finance/ads/', '/investing/ads/',
+            '/trading/ads/', '/markets/ads/', '/stocks/ads/',
+            '/bonds/ads/', '/commodities/ads/', '/currencies/ads/',
+            '/forex/ads/'
+        ];
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            const urlStr = url.toString();
+            if (videoAdDomains.some(domain => urlStr.includes(domain)) && 
+                videoAdPaths.some(path => urlStr.includes(path))) {
+                console.log('Guardian: Blocked general video ad fetch request:', urlStr);
+                updateStats('video', window.location.hostname);
+                return Promise.reject(new Error('Blocked by Guardian Ad Blocker'));
+            }
+            return originalFetch.apply(this, arguments);
+        };
+        const originalXHROpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url, async) {
+            const urlStr = url.toString();
+            if (videoAdDomains.some(domain => urlStr.includes(domain)) && 
+                videoAdPaths.some(path => urlStr.includes(path))) {
+                console.log('Guardian: Blocked general video ad XHR request:', urlStr);
+                updateStats('video', window.location.hostname);
+                this.abort();
+                return;
+            }
+            return originalXHROpen.apply(this, arguments);
+        };
     };
 
     // ===== GOOGLE SEARCH AD BLOCKING =====
@@ -1097,10 +1334,11 @@ Response:`;
         
         sponsoredSelectors.forEach(selector => {
             document.querySelectorAll(selector).forEach(element => {
-                if (element && element.parentNode) {
-                    element.remove();
-                    console.log('Guardian: Removed Google search ad/sponsored content:', selector);
-                }
+                            if (element && element.parentNode) {
+                element.remove();
+                updateStats('banner', window.location.hostname);
+                console.log('Guardian: Removed Google search ad/sponsored content:', selector);
+            }
             });
         });
         
@@ -1111,40 +1349,10 @@ Response:`;
             
             if (hasSponsoredContent && container.parentNode) {
                 container.remove();
+                updateStats('banner', window.location.hostname);
                 console.log('Guardian: Removed entire sponsored search result container');
             }
         });
-    };
-
-    // ===== GENERAL BLOCKING =====
-    
-    /**
-     * Initialize general blocking for other sites
-     */
-    const initializeGeneralBlocking = () => {
-        console.log('Guardian: Initializing general ad blocking');
-        
-        // Block Google search ads specifically
-        if (window.location.hostname.includes('google.com')) {
-            blockGoogleSearchAds();
-            // Run periodically for dynamic content
-            setInterval(blockGoogleSearchAds, 2000);
-        }
-        
-        // Block common ad elements for other sites
-        const generalSelectors = [
-            '.adsbygoogle', '.googlesyndication', '.google-ad',
-            'ins.adsbygoogle', 'div[data-ad-client]', 'div[data-ad-slot]',
-            '.ad-container', '.ad-banner', '.ad-block', '.advertisement',
-            '.sponsored', '.promo', '.promotion', '.popup', '.overlay',
-            '.modal', '.lightbox', '.banner-ad', '.video-ad', '.player-ad'
-        ];
-        
-        setInterval(() => {
-            generalSelectors.forEach(selector => {
-                document.querySelectorAll(selector).forEach(el => el.remove());
-            });
-        }, 2000);
     };
 
     // ===== INITIALIZATION =====
@@ -1177,7 +1385,12 @@ Response:`;
         
         // Log statistics periodically
         setInterval(() => {
-            console.log('Guardian Stats:', adBlockStats);
+            console.log('Guardian Stats:', {
+                totalBlocked: adBlockStats.totalBlocked,
+                blockedByType: adBlockStats.blockedByType,
+                blockedByDomain: adBlockStats.blockedByDomain,
+                lastUpdated: new Date(adBlockStats.lastUpdated).toLocaleString()
+            });
         }, 10000);
     };
 
