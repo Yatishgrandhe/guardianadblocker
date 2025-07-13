@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Ad Blocker - Advanced Test Suite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-title {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .ad-element {
+            background: #e74c3c;
+            color: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .ad-element.blocked {
+            background: #27ae60;
+        }
+        
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .test-result.pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .test-result.fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .test-result.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .button:hover {
+            background: #2980b9;
+        }
+        
+        .iframe-container {
+            border: 2px solid #ddd;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .popup {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .close-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Guardian Ad Blocker - Advanced Test Suite</h1>
+    
+    <div class="test-section">
+        <h2 class="test-title">📊 Test Results Dashboard</h2>
+        <div id="test-results">
+            <div class="test-result info">Running tests...</div>
+        </div>
+        <button class="button" onclick="runAllTests()">🔄 Run All Tests</button>
+        <button class="button" onclick="clearResults()">🗑️ Clear Results</button>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🎯 YouTube Ad Blocking Tests</h2>
+        
+        <div class="ad-element" id="youtube-ad-1">
+            YouTube Ad Container (should be blocked)
+        </div>
+        
+        <div class="ad-element" id="youtube-overlay">
+            YouTube Ad Overlay (should be blocked)
+        </div>
+        
+        <div class="ad-element" id="youtube-skip-button">
+            YouTube Skip Button (should remain visible)
+        </div>
+        
+        <div class="ad-element" id="youtube-shorts">
+            YouTube Shorts Container (should remain visible)
+        </div>
+        
+        <button class="button" onclick="testYouTubeBlocking()">Test YouTube Blocking</button>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">📰 News Site Ad Blocking Tests</h2>
+        
+        <div class="ad-element ad-container" id="news-ad-1">
+            News Ad Container (should be blocked)
+        </div>
+        
+        <div class="ad-element sponsored-content" id="news-sponsored">
+            Sponsored Content (should be blocked)
+        </div>
+        
+        <div class="ad-element ad-slot" id="news-ad-slot">
+            Ad Slot (should be blocked)
+        </div>
+        
+        <div class="ad-element sticky-ad" id="news-sticky">
+            Sticky Ad (should be blocked)
+        </div>
+        
+        <button class="button" onclick="testNewsBlocking()">Test News Blocking</button>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🎬 Streaming Site Ad Blocking Tests</h2>
+        
+        <div class="ad-element overlay" id="streaming-overlay">
+            Streaming Overlay (should be blocked)
+        </div>
+        
+        <div class="ad-element popup" id="streaming-popup">
+            Streaming Popup (should be blocked)
+        </div>
+        
+        <div class="ad-element ad-layer" id="streaming-ad-layer">
+            Ad Layer (should be blocked)
+        </div>
+        
+        <div class="iframe-container">
+            <iframe src="about:blank" id="video-player" style="width: 100%; height: 200px; border: 1px solid #ccc;">
+                Video Player (should remain visible)
+            </iframe>
+        </div>
+        
+        <button class="button" onclick="testStreamingBlocking()">Test Streaming Blocking</button>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🔧 Dynamic Injection Tests</h2>
+        
+        <button class="button" onclick="injectAdElement()">Inject Ad Element</button>
+        <button class="button" onclick="injectOverlay()">Inject Overlay</button>
+        <button class="button" onclick="injectPopup()">Inject Popup</button>
+        
+        <div id="dynamic-test-area">
+            <p>Dynamic elements will appear here and should be blocked automatically.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">⚡ Performance Tests</h2>
+        
+        <div id="performance-results">
+            <div class="test-result info">Performance monitoring active...</div>
+        </div>
+        
+        <button class="button" onclick="testPerformance()">Test Performance</button>
+        <button class="button" onclick="stressTest()">Stress Test (100 elements)</button>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🎮 Interactive Tests</h2>
+        
+        <button class="button" onclick="simulateYouTubeSkip()">Simulate YouTube Skip Button</button>
+        <button class="button" onclick="simulateNotification()">Simulate Notification Request</button>
+        <button class="button" onclick="simulateClickHijack()">Simulate Click Hijack</button>
+        
+        <div id="interactive-results">
+            <div class="test-result info">Interactive tests ready...</div>
+        </div>
+    </div>
+
+    <script>
+        // Test Results Management
+        let testResults = [];
+        
+        function addTestResult(testName, passed, message) {
+            const result = {
+                name: testName,
+                passed: passed,
+                message: message,
+                timestamp: new Date().toISOString()
+            };
+            testResults.push(result);
+            updateResultsDisplay();
+        }
+        
+        function updateResultsDisplay() {
+            const container = document.getElementById('test-results');
+            const passed = testResults.filter(r => r.passed).length;
+            const total = testResults.length;
+            
+            container.innerHTML = `
+                <div class="test-result ${passed === total ? 'pass' : 'fail'}">
+                    📊 Test Results: ${passed}/${total} passed
+                </div>
+                ${testResults.map(r => `
+                    <div class="test-result ${r.passed ? 'pass' : 'fail'}">
+                        ${r.passed ? '✅' : '❌'} ${r.name}: ${r.message}
+                    </div>
+                `).join('')}
+            `;
+        }
+        
+        function clearResults() {
+            testResults = [];
+            updateResultsDisplay();
+        }
+        
+        // YouTube Blocking Tests
+        function testYouTubeBlocking() {
+            const ad1 = document.getElementById('youtube-ad-1');
+            const overlay = document.getElementById('youtube-overlay');
+            const skipButton = document.getElementById('youtube-skip-button');
+            const shorts = document.getElementById('youtube-shorts');
+            
+            // Simulate blocking
+            setTimeout(() => {
+                const ad1Blocked = ad1.style.display === 'none' || ad1.style.visibility === 'hidden';
+                const overlayBlocked = overlay.style.display === 'none' || overlay.style.visibility === 'hidden';
+                const skipVisible = skipButton.style.display !== 'none' && skipButton.style.visibility !== 'hidden';
+                const shortsVisible = shorts.style.display !== 'none' && shorts.style.visibility !== 'hidden';
+                
+                addTestResult('YouTube Ad Container Blocking', ad1Blocked, 'Ad container should be hidden');
+                addTestResult('YouTube Overlay Blocking', overlayBlocked, 'Ad overlay should be hidden');
+                addTestResult('YouTube Skip Button Preservation', skipVisible, 'Skip button should remain visible');
+                addTestResult('YouTube Shorts Preservation', shortsVisible, 'Shorts container should remain visible');
+            }, 1000);
+        }
+        
+        // News Site Blocking Tests
+        function testNewsBlocking() {
+            const ad1 = document.getElementById('news-ad-1');
+            const sponsored = document.getElementById('news-sponsored');
+            const adSlot = document.getElementById('news-ad-slot');
+            const sticky = document.getElementById('news-sticky');
+            
+            setTimeout(() => {
+                const ad1Blocked = ad1.style.display === 'none' || ad1.offsetParent === null;
+                const sponsoredBlocked = sponsored.style.display === 'none' || sponsored.offsetParent === null;
+                const adSlotBlocked = adSlot.style.display === 'none' || adSlot.offsetParent === null;
+                const stickyBlocked = sticky.style.display === 'none' || sticky.offsetParent === null;
+                
+                addTestResult('News Ad Container Blocking', ad1Blocked, 'Ad container should be hidden');
+                addTestResult('News Sponsored Content Blocking', sponsoredBlocked, 'Sponsored content should be hidden');
+                addTestResult('News Ad Slot Blocking', adSlotBlocked, 'Ad slot should be hidden');
+                addTestResult('News Sticky Ad Blocking', stickyBlocked, 'Sticky ad should be hidden');
+            }, 1000);
+        }
+        
+        // Streaming Site Blocking Tests
+        function testStreamingBlocking() {
+            const overlay = document.getElementById('streaming-overlay');
+            const popup = document.getElementById('streaming-popup');
+            const adLayer = document.getElementById('streaming-ad-layer');
+            const videoPlayer = document.getElementById('video-player');
+            
+            setTimeout(() => {
+                const overlayBlocked = overlay.style.display === 'none' || overlay.offsetParent === null;
+                const popupBlocked = popup.style.display === 'none' || popup.offsetParent === null;
+                const adLayerBlocked = adLayer.style.display === 'none' || adLayer.offsetParent === null;
+                const videoVisible = videoPlayer.style.display !== 'none' && videoPlayer.offsetParent !== null;
+                
+                addTestResult('Streaming Overlay Blocking', overlayBlocked, 'Overlay should be hidden');
+                addTestResult('Streaming Popup Blocking', popupBlocked, 'Popup should be hidden');
+                addTestResult('Streaming Ad Layer Blocking', adLayerBlocked, 'Ad layer should be hidden');
+                addTestResult('Video Player Preservation', videoVisible, 'Video player should remain visible');
+            }, 1000);
+        }
+        
+        // Dynamic Injection Tests
+        function injectAdElement() {
+            const area = document.getElementById('dynamic-test-area');
+            const ad = document.createElement('div');
+            ad.className = 'ad-element ad-container';
+            ad.textContent = 'Dynamically Injected Ad (should be blocked)';
+            ad.id = 'dynamic-ad-' + Date.now();
+            area.appendChild(ad);
+            
+            setTimeout(() => {
+                const blocked = ad.style.display === 'none' || ad.offsetParent === null;
+                addTestResult('Dynamic Ad Injection Blocking', blocked, 'Dynamically injected ad should be blocked');
+            }, 500);
+        }
+        
+        function injectOverlay() {
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            overlay.innerHTML = `
+                <div class="popup">
+                    <h3>Dynamic Overlay</h3>
+                    <p>This should be blocked automatically</p>
+                    <button class="close-btn" onclick="this.parentElement.parentElement.remove()">Close</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            
+            setTimeout(() => {
+                const blocked = overlay.style.display === 'none' || overlay.offsetParent === null;
+                addTestResult('Dynamic Overlay Blocking', blocked, 'Dynamically injected overlay should be blocked');
+            }, 500);
+        }
+        
+        function injectPopup() {
+            const popup = document.createElement('div');
+            popup.className = 'popup ad-popup';
+            popup.innerHTML = `
+                <h3>Dynamic Popup</h3>
+                <p>This should be blocked automatically</p>
+                <button class="close-btn" onclick="this.parentElement.remove()">Close</button>
+            `;
+            popup.style.position = 'fixed';
+            popup.style.top = '50%';
+            popup.style.left = '50%';
+            popup.style.transform = 'translate(-50%, -50%)';
+            popup.style.zIndex = '1000';
+            document.body.appendChild(popup);
+            
+            setTimeout(() => {
+                const blocked = popup.style.display === 'none' || popup.offsetParent === null;
+                addTestResult('Dynamic Popup Blocking', blocked, 'Dynamically injected popup should be blocked');
+            }, 500);
+        }
+        
+        // Performance Tests
+        function testPerformance() {
+            const startTime = performance.now();
+            
+            // Simulate heavy DOM manipulation
+            for (let i = 0; i < 50; i++) {
+                const element = document.createElement('div');
+                element.className = 'ad-element';
+                element.textContent = `Performance Test Element ${i}`;
+                document.body.appendChild(element);
+            }
+            
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            
+            addTestResult('Performance Test', duration < 100, `DOM manipulation took ${duration.toFixed(2)}ms (should be < 100ms)`);
+        }
+        
+        function stressTest() {
+            const startTime = performance.now();
+            
+            // Create 100 ad elements
+            for (let i = 0; i < 100; i++) {
+                const element = document.createElement('div');
+                element.className = 'ad-element ad-container';
+                element.textContent = `Stress Test Element ${i}`;
+                element.id = `stress-ad-${i}`;
+                document.body.appendChild(element);
+            }
+            
+            setTimeout(() => {
+                const endTime = performance.now();
+                const duration = endTime - startTime;
+                
+                // Check how many were blocked
+                let blockedCount = 0;
+                for (let i = 0; i < 100; i++) {
+                    const element = document.getElementById(`stress-ad-${i}`);
+                    if (element && (element.style.display === 'none' || element.offsetParent === null)) {
+                        blockedCount++;
+                    }
+                }
+                
+                addTestResult('Stress Test', blockedCount >= 95, `${blockedCount}/100 elements blocked in ${duration.toFixed(2)}ms`);
+            }, 1000);
+        }
+        
+        // Interactive Tests
+        function simulateYouTubeSkip() {
+            const skipButton = document.createElement('button');
+            skipButton.className = 'ytp-ad-skip-button';
+            skipButton.textContent = 'Skip Ad';
+            skipButton.onclick = () => {
+                addTestResult('YouTube Skip Button Click', true, 'Skip button was clicked successfully');
+            };
+            document.body.appendChild(skipButton);
+            
+            // Simulate auto-click
+            setTimeout(() => {
+                skipButton.click();
+                skipButton.remove();
+            }, 100);
+        }
+        
+        function simulateNotification() {
+            if (Notification && Notification.requestPermission) {
+                Notification.requestPermission().then(permission => {
+                    addTestResult('Notification Permission', permission === 'denied', `Notification permission: ${permission}`);
+                });
+            } else {
+                addTestResult('Notification Permission', false, 'Notification API not available');
+            }
+        }
+        
+        function simulateClickHijack() {
+            const hijackElement = document.createElement('div');
+            hijackElement.onclick = () => window.open('https://example.com', '_blank');
+            hijackElement.textContent = 'Click Hijack Test';
+            hijackElement.style.padding = '10px';
+            hijackElement.style.background = '#e74c3c';
+            hijackElement.style.color = 'white';
+            hijackElement.style.cursor = 'pointer';
+            document.body.appendChild(hijackElement);
+            
+            setTimeout(() => {
+                const blocked = hijackElement.style.display === 'none' || hijackElement.offsetParent === null;
+                addTestResult('Click Hijack Blocking', blocked, 'Click hijack element should be blocked');
+                hijackElement.remove();
+            }, 500);
+        }
+        
+        // Run all tests
+        function runAllTests() {
+            clearResults();
+            
+            setTimeout(() => testYouTubeBlocking(), 100);
+            setTimeout(() => testNewsBlocking(), 200);
+            setTimeout(() => testStreamingBlocking(), 300);
+            setTimeout(() => testPerformance(), 400);
+            setTimeout(() => simulateYouTubeSkip(), 500);
+            setTimeout(() => simulateNotification(), 600);
+            setTimeout(() => simulateClickHijack(), 700);
+        }
+        
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html> 

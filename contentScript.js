@@ -102,13 +102,13 @@
      * Computer Vision-based element analysis
      */
     const analyzeElementWithComputerVision = async (element) => {
-        const elementInfo = {
-            tagName: element.tagName,
-            className: element.className,
-            id: element.id,
-            src: element.src || '',
-            href: element.href || '',
-            textContent: element.textContent?.substring(0, 200) || '',
+            const elementInfo = {
+                tagName: element.tagName,
+                className: element.className,
+                id: element.id,
+                src: element.src || '',
+                href: element.href || '',
+                textContent: element.textContent?.substring(0, 200) || '',
             attributes: Array.from(element.attributes).map(attr => `${attr.name}="${attr.value}"`).join(' '),
             // Enhanced visual analysis
             dimensions: {
@@ -173,39 +173,39 @@ Consider these computer vision and ML techniques:
 5. IMAGE_ANALYSIS: Image dimensions, alt text, src patterns
 
 Respond with only "AD" if it's an ad/tracking, or "CLEAN" if it's legitimate content.`;
-
-        const response = await fetch(OPENROUTER_API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-                'Content-Type': 'application/json',
-                'HTTP-Referer': window.location.origin,
-                'X-Title': 'Guardian Ad Blocker'
-            },
-            body: JSON.stringify({
+            
+            const response = await fetch(OPENROUTER_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                    'Content-Type': 'application/json',
+                    'HTTP-Referer': window.location.origin,
+                    'X-Title': 'Guardian Ad Blocker'
+                },
+                body: JSON.stringify({
                 model: model,
-                messages: [
-                    {
-                        role: 'system',
+                    messages: [
+                        {
+                            role: 'system',
                         content: 'You are an expert ad detection system with advanced computer vision and machine learning capabilities. Analyze HTML elements using multiple techniques to identify advertisements, tracking scripts, and analytics components.'
-                    },
-                    {
-                        role: 'user',
-                        content: prompt
-                    }
-                ],
-                max_tokens: 10,
-                temperature: 0.1
-            })
-        });
-        
-        if (!response.ok) {
+                        },
+                        {
+                            role: 'user',
+                            content: prompt
+                        }
+                    ],
+                    max_tokens: 10,
+                    temperature: 0.1
+                })
+            });
+            
+            if (!response.ok) {
             throw new Error(`API request failed: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        const aiResponse = data.choices?.[0]?.message?.content?.trim() || '';
-        
+            }
+            
+            const data = await response.json();
+            const aiResponse = data.choices?.[0]?.message?.content?.trim() || '';
+            
         return {
             model: model,
             response: aiResponse,
