@@ -18,17 +18,8 @@
     const isHiAnime = () => window.location.hostname.includes('hianime.to') || window.location.hostname.includes('hianime.com');
     const isCNN = () => window.location.hostname.includes('cnn.com') || window.location.hostname.includes('cnn.io');
 
-    // Enhanced Statistics tracking - Unified with background script
+    // Statistics tracking
     let adBlockStats = {
-        totalBlocked: 0,
-        blockedByType: {
-            banner: 0,
-            video: 0,
-            popup: 0,
-            redirect: 0,
-            other: 0
-        },
-        blockedByDomain: {},
         scripts: 0,
         elements: 0,
         networks: 0,
@@ -36,57 +27,8 @@
         inlineScripts: 0,
         mutations: 0,
         aiDetections: 0,
-        aiBlocks: 0,
-        lastUpdated: Date.now()
+        aiBlocks: 0
     };
-
-    // Initialize stats from storage
-    const initializeStats = () => {
-        if (typeof chrome !== 'undefined' && chrome.storage) {
-            chrome.storage.local.get(['adStats'], (result) => {
-                if (result.adStats) {
-                    adBlockStats = { ...adBlockStats, ...result.adStats };
-                }
-            });
-        }
-    };
-
-    // Update and save statistics
-    const updateStats = (type, domain = null, count = 1) => {
-        adBlockStats.totalBlocked += count;
-        adBlockStats.lastUpdated = Date.now();
-        
-        // Update type-specific stats
-        if (type in adBlockStats.blockedByType) {
-            adBlockStats.blockedByType[type] += count;
-        } else {
-            adBlockStats.blockedByType.other += count;
-        }
-        
-        // Update domain-specific stats
-        if (domain) {
-            adBlockStats.blockedByDomain[domain] = (adBlockStats.blockedByDomain[domain] || 0) + count;
-        }
-        
-        // Save to storage
-        if (typeof chrome !== 'undefined' && chrome.storage) {
-            chrome.storage.local.set({ adStats: adBlockStats });
-            
-            // Notify background script
-            chrome.runtime.sendMessage({
-                type: 'UPDATE_STATS',
-                adStats: adBlockStats,
-                domain: domain || window.location.hostname
-            }).catch(() => {
-                // Ignore connection errors
-            });
-        }
-        
-        console.log('Guardian: Updated stats -', type, 'blocked:', count);
-    };
-
-    // Initialize stats on load
-    initializeStats();
 
     /**
      * AI-powered ad detection using OpenRouter API
@@ -167,6 +109,7 @@ Response:`;
             aiDetectionCache.set(elementSignature, isAd);
             
             if (isAd) {
+                adBlockStats.aiDetections++;
                 console.log('Guardian: AI detected ad element:', elementInfo);
             }
             
@@ -195,7 +138,7 @@ Response:`;
         const traditionalBlock = isTraditionalAdElement(element);
         if (traditionalBlock) {
             element.remove();
-            updateStats('banner', window.location.hostname);
+            adBlockStats.elements++;
             console.log('Guardian: Removed element (traditional detection)');
             return;
         }
@@ -204,7 +147,7 @@ Response:`;
         const aiBlock = await detectAdWithAI(element);
         if (aiBlock) {
             element.remove();
-            updateStats('other', window.location.hostname);
+            adBlockStats.aiBlocks++;
             console.log('Guardian: Removed element (AI detection)');
         }
     };
@@ -415,7 +358,7 @@ Response:`;
         window.adsbygoogle = window.adsbygoogle || [];
         window.adsbygoogle.push = () => {};
         
-        updateStats('other', window.location.hostname, trackingGlobals.length);
+        adBlockStats.globals += trackingGlobals.length;
         console.log('Guardian: Blocked', trackingGlobals.length, 'tracking globals');
     };
 
@@ -468,7 +411,7 @@ Response:`;
             if (adDomains.some(domain => urlStr.includes(domain)) || 
                 adPaths.some(path => urlStr.includes(path))) {
                 console.log('Guardian: Blocked fetch request:', urlStr);
-                updateStats('redirect', window.location.hostname);
+                adBlockStats.networks++;
                 return Promise.reject(new Error('Blocked by Guardian Ad Blocker'));
             }
             return originalFetch.apply(this, arguments);
@@ -481,7 +424,7 @@ Response:`;
             if (adDomains.some(domain => urlStr.includes(domain)) || 
                 adPaths.some(path => urlStr.includes(path))) {
                 console.log('Guardian: Blocked XHR request:', urlStr);
-                updateStats('redirect', window.location.hostname);
+                adBlockStats.networks++;
                 this.abort();
                 return;
             }
@@ -500,7 +443,7 @@ Response:`;
                         if (adDomains.some(domain => urlStr.includes(domain)) || 
                             adPaths.some(path => urlStr.includes(path))) {
                             console.log('Guardian: Blocked script creation:', urlStr);
-                            updateStats('other', window.location.hostname);
+                            adBlockStats.scripts++;
                             return;
                         }
                     }
@@ -583,7 +526,7 @@ Response:`;
             document.querySelectorAll(selector).forEach(element => {
                 if (element && element.parentNode) {
                     element.remove();
-                    updateStats('banner', window.location.hostname);
+                    adBlockStats.elements++;
                     console.log('Guardian: Removed AdBlock Tester element:', selector);
                 }
             });
@@ -642,7 +585,7 @@ Response:`;
                 
                 if (trackingPatterns.some(pattern => content.includes(pattern))) {
                     script.remove();
-                    updateStats('other', window.location.hostname);
+                    adBlockStats.inlineScripts++;
                     console.log('Guardian: Removed inline tracking script');
                 }
             }
@@ -882,7 +825,7 @@ Response:`;
                             const isAd = adElementSelectors.some(selector => node.matches(selector));
                             if (isAd) {
                                 node.remove();
-                                updateStats('banner', window.location.hostname);
+                                adBlockStats.mutations++;
                                 console.log('Guardian: Removed AdBlock Tester ad element (mutation)');
                             } else {
                                 // AI-powered detection for non-traditional elements
@@ -890,7 +833,7 @@ Response:`;
                             }
                             node.querySelectorAll && node.querySelectorAll(adElementSelectors.join(', ')).forEach(adEl => {
                                 adEl.remove();
-                                updateStats('banner', window.location.hostname);
+                                adBlockStats.mutations++;
                                 console.log('Guardian: Removed AdBlock Tester ad element (descendant)');
                             });
 
@@ -906,7 +849,7 @@ Response:`;
                                 
                                 if (trackingPatterns.some(pattern => content.includes(pattern))) {
                                     node.remove();
-                                    updateStats('other', window.location.hostname);
+                                    adBlockStats.inlineScripts++;
                                     console.log('Guardian: Removed inline tracking script (mutation)');
                                 }
                             }
@@ -991,10 +934,7 @@ Response:`;
         
         setInterval(() => {
             hiAnimeSelectors.forEach(selector => {
-                document.querySelectorAll(selector).forEach(el => {
-                    el.remove();
-                    updateStats('banner', window.location.hostname);
-                });
+                document.querySelectorAll(selector).forEach(el => el.remove());
             });
         }, 1000);
     };
@@ -1103,10 +1043,7 @@ Response:`;
 
         setInterval(() => {
             generalSelectors.forEach(selector => {
-                document.querySelectorAll(selector).forEach(el => {
-                    el.remove();
-                    updateStats('banner', window.location.hostname);
-                });
+                document.querySelectorAll(selector).forEach(el => el.remove());
             });
         }, 2000);
 
@@ -1156,7 +1093,7 @@ Response:`;
             if (videoAdDomains.some(domain => urlStr.includes(domain)) && 
                 videoAdPaths.some(path => urlStr.includes(path))) {
                 console.log('Guardian: Blocked general video ad fetch request:', urlStr);
-                updateStats('video', window.location.hostname);
+                adBlockStats.networks++;
                 return Promise.reject(new Error('Blocked by Guardian Ad Blocker'));
             }
             return originalFetch.apply(this, arguments);
@@ -1167,7 +1104,7 @@ Response:`;
             if (videoAdDomains.some(domain => urlStr.includes(domain)) && 
                 videoAdPaths.some(path => urlStr.includes(path))) {
                 console.log('Guardian: Blocked general video ad XHR request:', urlStr);
-                updateStats('video', window.location.hostname);
+                adBlockStats.networks++;
                 this.abort();
                 return;
             }
@@ -1334,11 +1271,10 @@ Response:`;
         
         sponsoredSelectors.forEach(selector => {
             document.querySelectorAll(selector).forEach(element => {
-                            if (element && element.parentNode) {
-                element.remove();
-                updateStats('banner', window.location.hostname);
-                console.log('Guardian: Removed Google search ad/sponsored content:', selector);
-            }
+                if (element && element.parentNode) {
+                    element.remove();
+                    console.log('Guardian: Removed Google search ad/sponsored content:', selector);
+                }
             });
         });
         
@@ -1349,7 +1285,6 @@ Response:`;
             
             if (hasSponsoredContent && container.parentNode) {
                 container.remove();
-                updateStats('banner', window.location.hostname);
                 console.log('Guardian: Removed entire sponsored search result container');
             }
         });
@@ -1385,12 +1320,7 @@ Response:`;
         
         // Log statistics periodically
         setInterval(() => {
-            console.log('Guardian Stats:', {
-                totalBlocked: adBlockStats.totalBlocked,
-                blockedByType: adBlockStats.blockedByType,
-                blockedByDomain: adBlockStats.blockedByDomain,
-                lastUpdated: new Date(adBlockStats.lastUpdated).toLocaleString()
-            });
+            console.log('Guardian Stats:', adBlockStats);
         }, 10000);
     };
 
